@@ -1,6 +1,6 @@
 
 let current = 1;
-let timeLimit = 30 * 60; // 制限時間：30分（秒）
+let timeLimit = 1 * 60; // 制限時間：30分（秒）
 
 const answers = Array(total).fill("");
 
