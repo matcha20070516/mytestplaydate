@@ -164,7 +164,6 @@ const handleExamEnd = (message) => {
   localStorage.removeItem("exCurrent");
   localStorage.removeItem("exTimeLeft");
 
-window.onload = () => {
   const reviewMode = localStorage.getItem("exReviewMode") === "true";
   if (reviewMode) {
     // タイマー非表示
@@ -192,7 +191,7 @@ window.onload = () => {
 
     backBtn.addEventListener("click", () => {
       localStorage.removeItem("exReviewMode");
-      window.location.href = "exresult_detail_M.html"; // 詳細ページに戻る
+      window.location.href = "exresult.html"; // 詳細ページに戻る
     });
   } else {
     // 普通の試験モードの処理（今まで通り）
@@ -236,16 +235,4 @@ window.onload = () => {
   document.getElementById("confirm-no").onclick = () => {
     document.getElementById("confirm-overlay").style.display = "none";
   };
-
-  // 問題画像クリックでモーダル拡大
-  document.getElementById("quiz-img").addEventListener("click", function () {
-    const modal = document.getElementById("imageModal");
-    const modalImg = document.getElementById("modalImage");
-    modal.style.display = "block";
-    modalImg.src = this.src;
-  });
-
-  document.getElementById("imageModal").addEventListener("click", function () {
-    this.style.display = "none";
-  });
 };
