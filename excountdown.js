@@ -14,7 +14,7 @@ const timer = setInterval(() => {
         clearInterval(timer);
 
         // ✅ localStorage に変更！
-        const selectedSet = localStorage.getItem('exSetName');
+        localStorage.setItem(`${prefix}_SetName`, set);
 
         let targetPage = '';
         switch (selectedSet) {
