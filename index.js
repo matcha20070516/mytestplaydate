@@ -7,54 +7,47 @@ function start() {
     return;
   }
 
-  if (set.includes("謎検模試")) {
-    const prefix = `ex_${set}`;  // 例: ex_謎検模試セット1
+  const prefix = `ex_${set}`;  // ex_謎検模試セット1 とか
 
-    const hasOldData =
-      localStorage.getItem(`${prefix}_Answers`) ||
-      localStorage.getItem(`${prefix}_Username`) ||
-      localStorage.getItem(`${prefix}_SetName`);
+  const hasOldData =
+    localStorage.getItem(`${prefix}_Answers`) ||
+    localStorage.getItem(`${prefix}_Username`) ||
+    localStorage.getItem(`${prefix}_SetName`);
 
-    if (hasOldData) {
-      const continueOld = confirm("以前のデータが残っています。このセットで続けますか？「OK」で続行、「キャンセル」で新しく始めます。");
-      if (!continueOld) {
-        let count = parseInt(localStorage.getItem(`${prefix}_AttemptCount`) || "0", 10);
-        count += 1;
-        localStorage.setItem(`${prefix}_AttemptCount`, count);
-        
-        const exKeysToClear = [
-    "Username", "SetName", "Answers", "Score", "TimeLimit",
-    "ElapsedTime", "StartTime", "Progress", "CurrentPage", "Current", "ResultLocked"
-  ];
-        // prefix付きのキー削除
-        exKeysToClear.forEach(key => localStorage.removeItem(`${prefix}_${key}`));
+  if (hasOldData) {
+    const continueOld = confirm("以前のデータが残っています。このセットで続けますか？\n「OK」で続行、「キャンセル」で新しく始めます。");
+    if (!continueOld) {
+      let count = parseInt(localStorage.getItem(`${prefix}_AttemptCount`) || "0", 10);
+      count += 1;
+      localStorage.setItem(`${prefix}_AttemptCount`, count);
 
-        // 念のため旧形式のキーも削除
-        const legacyKeys = [
-    "exAnswers", "exScore", "exElapsedTime", "exCurrent", "exResultLocked"
-  ];
-        legacyKeys.forEach(key => localStorage.removeItem(key));
-        localStorage.setItem(`${prefix}_FreshStart`, "true");
-        alert(`新しく始めます。（${count}回目の挑戦）`);
-      } else {
-        alert("前回のデータで続行します。");
-      }
-    } else {
-      localStorage.setItem(`${prefix}_AttemptCount`, "1");
+      const exKeysToClear = [
+        "Username", "SetName", "Answers", "Score", "TimeLimit",
+        "ElapsedTime", "StartTime", "Progress", "CurrentPage", "Current", "ResultLocked"
+      ];
+      exKeysToClear.forEach(key => localStorage.removeItem(`${prefix}_${key}`));
+
+      const legacyKeys = [
+        "exAnswers", "exScore", "exElapsedTime", "exCurrent", "exResultLocked"
+      ];
+      legacyKeys.forEach(key => localStorage.removeItem(key));
+
       localStorage.setItem(`${prefix}_FreshStart`, "true");
-      alert("模試を始めます。");
+      alert(`新しく始めます。（${count}回目の挑戦）`);
+    } else {
+      alert("前回のデータで続行します。");
     }
-
-    localStorage.setItem(`${prefix}_Username`, name);
-    localStorage.setItem(`${prefix}_SetName`, set);
-    localStorage.setItem("currentExamSet", set);  // ← どのセットを開いているかを覚えておく
-    window.location.href = "exrule.html";
-
   } else {
-    sessionStorage.setItem("playerName", name);
-    sessionStorage.setItem("setName", set);
-    window.location.href = "rule.html";
+    localStorage.setItem(`${prefix}_AttemptCount`, "1");
+    localStorage.setItem(`${prefix}_FreshStart`, "true");
+    alert("模試を始めます。");
   }
+
+  localStorage.setItem(`${prefix}_Username`, name);
+  localStorage.setItem(`${prefix}_SetName`, set);
+  localStorage.setItem("currentExamSet", set);
+
+  window.location.href = "exrule.html";
 }
 
 function adjustViewportHeight() {
