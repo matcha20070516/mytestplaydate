@@ -13,8 +13,8 @@ const timer = setInterval(() => {
     } else {
         clearInterval(timer);
 
-        // ✅ localStorage に変更！
-        localStorage.setItem(`${prefix}_SetName`, set);
+        // ✅ 正しいキーで取得
+        const selectedSet = localStorage.getItem('currentExamSet');
 
         let targetPage = '';
         switch (selectedSet) {
@@ -24,11 +24,11 @@ const timer = setInterval(() => {
             case '謎検模試test':
                 targetPage = 'exproblem_set2.html';
                 break;
-            case 'set3':
+            case '謎検模試_set3':
                 targetPage = 'exproblem_set3.html';
                 break;
             default:
-                targetPage = 'exproblem_set1.html';
+                targetPage = 'exproblem_set1.html'; // fallback
                 break;
         }
 
