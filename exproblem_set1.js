@@ -152,7 +152,6 @@ const handleExamEnd = (message) => {
     "名無し";
 
   const setName = localStorage.getItem("exSetName") || "謎検模試セット";
-
   const score = calculateScore(answers);
 
   localStorage.setItem("exUsername", username);
@@ -178,7 +177,7 @@ const handleExamEnd = (message) => {
     const submitBtn = document.getElementById("submit-btn");
     if (submitBtn) submitBtn.style.display = "none";
 
-    // 「結果に戻る」ボタンを左上に追加
+    // 「結果に戻る」ボタン
     const backBtn = document.createElement("button");
     backBtn.id = "back-to-result";
     backBtn.textContent = "結果に戻る";
@@ -191,15 +190,13 @@ const handleExamEnd = (message) => {
 
     backBtn.addEventListener("click", () => {
       localStorage.removeItem("exReviewMode");
-      window.location.href = "exresult.html"; // 詳細ページに戻る
+      window.location.href = "exresult.html";
     });
-  } else {
-    // 普通の試験モードの処理（今まで通り）
-    updateTimer();
-    timerInterval = setInterval(updateTimer, 1000);
-    if (submitBtn) submitBtn.onclick = confirmAndFinish;
   }
-  loadQuestion();
+
+  // ここで完了
+  alert(message);
+  location.href = "exresult.html";
 };
   
   alert(message);
