@@ -198,10 +198,6 @@ const handleExamEnd = (message) => {
   alert(message);
   location.href = "exresult.html";
 };
-  
-  alert(message);
-  location.href = "exresult.html";
-};
 const confirmAndFinish = () => {
   document.getElementById("confirm-overlay").style.display = "flex";
 };
