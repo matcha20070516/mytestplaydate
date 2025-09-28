@@ -210,17 +210,27 @@ window.onload = () => {
     lockNotice.textContent = "この模試の結果は確定済みです。解答を変更できません。";
     lockNotice.style.color = "red";
     document.querySelector(".quiz-area")?.prepend(lockNotice);
+
+    // 🔹 終了後は保存された経過時間を使ってタイマーを固定表示
+    const elapsed = parseInt(localStorage.getItem("exElapsedTime") || "0", 10);
+    const fixedTimeLeft = (30 * 60) - elapsed;
+    const m = Math.floor(fixedTimeLeft / 60);
+    const s = fixedTimeLeft % 60;
+    document.getElementById("timer").textContent =
+      `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+
+  } else {
+    // 通常プレイ時だけタイマーを動かす
+    loadQuestion();
+    updateTimer();
+    timerInterval = setInterval(updateTimer, 1000);
+    setInterval(autoSaveState, 1000);
+
+    document.getElementById("answer").addEventListener("input", () => {
+      saveCurrentAnswer();
+      updateChapters();
+    });
   }
-
-  loadQuestion();
-  updateTimer();
-  timerInterval = setInterval(updateTimer, 1000);
-  setInterval(autoSaveState, 1000);
-
-  document.getElementById("answer").addEventListener("input", () => {
-    saveCurrentAnswer();
-    updateChapters();
-  });
 
   // 終了確認モーダル関連のイベント登録
   document.getElementById("submit-btn").onclick = confirmAndFinish;
