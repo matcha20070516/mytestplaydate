@@ -19,10 +19,10 @@ if (reviewBtn) {
     localStorage.setItem("exCurrent", "1"); // 1問目から開始
 
     // 現在のセットを取得
-    const setName = localStorage.getItem("exSetName");
+    const setName = localStorage.getItem(`${prefix}SetName`);
 
     let targetPage = "";
-    switch (setName) {
+    switch (`${prefix}SetName`) {
       case "謎検模試_M":
         targetPage = "exproblem_set1.html";
         break;
