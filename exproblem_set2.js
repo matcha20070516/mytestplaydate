@@ -178,22 +178,6 @@ window.onload = () => {
     // 「終了」ボタンを隠す
     const submitBtn = document.getElementById("submit-btn");
     if (submitBtn) submitBtn.style.display = "none";
-
-    // 「結果に戻る」ボタンを左上に追加
-    const backBtn = document.createElement("button");
-    backBtn.id = "back-to-result";
-    backBtn.textContent = "結果に戻る";
-    backBtn.style.position = "fixed";
-    backBtn.style.top = "12px";
-    backBtn.style.left = "12px";
-    backBtn.style.zIndex = "1001";
-    backBtn.style.padding = "8px 12px";
-    document.body.appendChild(backBtn);
-
-    backBtn.addEventListener("click", () => {
-      localStorage.removeItem("exReviewMode");
-      window.location.href = "exresult_detail_M.html"; // 詳細ページに戻る
-    });
   } else {
     // 普通の試験モードの処理（今まで通り）
     updateTimer();
