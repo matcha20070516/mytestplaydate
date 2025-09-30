@@ -12,17 +12,18 @@ window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("attemptCountDisplay").textContent = `${attemptCount}回目`;
   document.getElementById("setname").textContent = displaySetName;
 
-  const reviewBtn = document.getElementById("review-btn");
+ const reviewBtn = document.getElementById("review-btn");
 if (reviewBtn) {
   reviewBtn.addEventListener("click", () => {
     localStorage.setItem("exReviewMode", "true");
     localStorage.setItem("exCurrent", "1"); // 1問目から開始
 
-    // 現在のセットを取得
-    const setName = localStorage.getItem(`${prefix}SetName`);
+    // 🔹 prefix付きの SetName を参照
+    const currentExamSet = localStorage.getItem("currentExamSet");
+    const setName = localStorage.getItem(`ex_${currentExamSet}_SetName`);
 
     let targetPage = "";
-    switch (`${prefix}SetName`) {
+    switch (setName) {
       case "謎検模試_M":
         targetPage = "exproblem_set1.html";
         break;
@@ -40,7 +41,6 @@ if (reviewBtn) {
     window.location.href = targetPage;
   });
 }
-
   const tweetText = encodeURIComponent(
     `『${displaySetName}』の結果は【${score}点】でした！ #謎解き #TExAM`
   );
