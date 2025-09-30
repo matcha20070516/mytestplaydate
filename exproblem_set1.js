@@ -219,6 +219,9 @@ window.onload = () => {
     document.getElementById("timer").textContent =
       `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
 
+    // 🔹 問題内容をロードして表示
+    loadQuestion();
+
   } else {
     // 通常プレイ時だけタイマーを動かす
     loadQuestion();
