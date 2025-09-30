@@ -178,12 +178,17 @@ window.onload = () => {
     // 「終了」ボタンを隠す
     const submitBtn = document.getElementById("submit-btn");
     if (submitBtn) submitBtn.style.display = "none";
+
+    // ✅ confirm-overlay も消す
+    const overlay = document.getElementById("confirm-overlay");
+    if (overlay) overlay.remove();
   } else {
-    // 普通の試験モードの処理（今まで通り）
+    // 普通の試験モードの処理
     updateTimer();
     timerInterval = setInterval(updateTimer, 1000);
     if (submitBtn) submitBtn.onclick = confirmAndFinish;
   }
+
   loadQuestion();
 };
   
