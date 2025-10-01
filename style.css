@@ -21,6 +21,20 @@ body {
   text-align: center;
 }
 
+#home-btn {
+  position: fixed;
+  top: 10px;        /* 上からの余白 */
+  right: 10px;      /* 右からの余白 */
+  font-size: 30px;  /* アイコンの大きさ */
+  color: gray;      /* 初期色を灰色に固定 */
+  text-decoration: none; /* 下線消す */
+  z-index: 1000;    /* 他より前に出す */
+}
+
+#home-btn:hover {
+  color: black;     /* ホバーしたら黒に変化 */
+}
+
 /* フォントサイズ・余白微調整 */
 h1 {
   font-size: 1.8em;
@@ -343,18 +357,4 @@ tr.incorrect {
   max-height: 90%;
   border-radius: 8px;
   box-shadow: 0 0 20px rgba(255,255,255,0.5);
-}
-
-.home-btn {
-  position: fixed;
-  top: 15px;
-  right: 15px;
-  font-size: 28px;
-  color: gray;
-  text-decoration: none;
-  z-index: 1000;
-}
-
-.home-btn:hover {
-  color: black;
 }
