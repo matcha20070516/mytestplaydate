@@ -344,3 +344,17 @@ tr.incorrect {
   border-radius: 8px;
   box-shadow: 0 0 20px rgba(255,255,255,0.5);
 }
+
+.home-btn {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  font-size: 28px;
+  color: gray;
+  text-decoration: none;
+  z-index: 1000;
+}
+
+.home-btn:hover {
+  color: black;
+}
