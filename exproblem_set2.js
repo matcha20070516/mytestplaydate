@@ -167,17 +167,10 @@ const handleExamEnd = (message) => {
 window.onload = () => {
   const reviewMode = localStorage.getItem("exReviewMode") === "true";
   if (reviewMode) {
-    // タイマー非表示
-    const t = document.getElementById("timer");
-    if (t) t.style.display = "none";
 
     // 入力欄を触れなくする
     const ans = document.getElementById("answer");
     if (ans) ans.disabled = true;
-
-    // 「終了」ボタンを隠す
-    const submitBtn = document.getElementById("submit-btn");
-    if (submitBtn) submitBtn.style.display = "none";
 
     // ✅ confirm-overlay も消す
     const overlay = document.getElementById("confirm-overlay");
