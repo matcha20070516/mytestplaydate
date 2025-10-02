@@ -75,13 +75,13 @@ function start() {
         indicator.appendChild(dot);
       }
     }
-
-    function updateSlide() {howtoImg.src = `Howto${currentSlide + 1}.png`;
-      slideDesc.innerHTML = slideDescriptions[currentSlide];
-      prevBtn.disabled = currentSlide === 0;
-      nextBtn.disabled = currentSlide === totalSlides - 1;
-      renderIndicator();
-    }
+function updateSlide() {
+  howtoImg.src = `Howto${currentSlide + 1}.png`; // ←ここを修正！
+  slideDesc.innerHTML = slideDescriptions[currentSlide];
+  prevBtn.disabled = currentSlide === 0;
+  nextBtn.disabled = currentSlide === totalSlides - 1;
+  renderIndicator();
+}
 
     prevBtn.onclick = function() {
       if (currentSlide > 0) { currentSlide--; updateSlide(); }
