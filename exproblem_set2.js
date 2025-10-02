@@ -152,7 +152,6 @@ const handleExamEnd = (message) => {
     "名無し";
 
   const setName = localStorage.getItem("exSetName") || "謎検模試セット";
-
   const score = calculateScore(answers);
 
   localStorage.setItem("exUsername", username);
@@ -164,25 +163,25 @@ const handleExamEnd = (message) => {
   localStorage.removeItem("exCurrent");
   localStorage.removeItem("exTimeLeft");
 
-window.onload = () => {
   const reviewMode = localStorage.getItem("exReviewMode") === "true";
-  if (reviewMode) {
 
-    // 入力欄を触れなくする
+  // 🔹 ここは「問題見返すモード」のみ発動
+  if (reviewMode) {
+    const t = document.getElementById("timer");
+    if (t) t.style.display = "none";
     const ans = document.getElementById("answer");
     if (ans) ans.disabled = true;
+    const submitBtn = document.getElementById("submit-btn");
+    if (submitBtn) submitBtn.style.display = "none";
 
-    // ✅ confirm-overlay も消す
-    const overlay = document.getElementById("confirm-overlay");
-    if (overlay) overlay.remove();
-  } else {
-    // 普通の試験モードの処理
-    updateTimer();
-    timerInterval = setInterval(updateTimer, 1000);
-    if (submitBtn) submitBtn.onclick = confirmAndFinish;
+    // 「戻るボタンを作らない」ならこれでOK
+    return;
   }
-
   loadQuestion();
+
+  // 🔹 通常試験モード → 結果画面へ遷移
+  alert(message);
+  window.location.href = "exresult.html";
 };
   
   alert(message);
