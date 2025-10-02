@@ -219,10 +219,22 @@ window.onload = () => {
     });
   }
 
-  // 終了確認モーダル関連のイベント登録
-  document.getElementById("submit-btn").onclick = confirmAndFinish;
-  document.getElementById("confirm-yes").onclick = finishExam;
-  document.getElementById("confirm-no").onclick = () => {
-    document.getElementById("confirm-overlay").style.display = "none";
-  };
+  // レビュー（review）モード判定
+  const reviewMode = localStorage.getItem("exReviewMode") === "true";
+  if (reviewMode) {
+    // レビュー時は終了ボタンを押したら即、結果画面に遷移
+    const submitBtn = document.getElementById("submit-btn");
+    if (submitBtn) submitBtn.onclick = finishExam;
+
+    // モーダル自体も不要なら非表示にする
+    const overlay = document.getElementById("confirm-overlay");
+    if (overlay) overlay.style.display = "none";
+  } else {
+    // 通常時は確認モーダルを使う
+    document.getElementById("submit-btn").onclick = confirmAndFinish;
+    document.getElementById("confirm-yes").onclick = finishExam;
+    document.getElementById("confirm-no").onclick = () => {
+      document.getElementById("confirm-overlay").style.display = "none";
+    };
+  }
 };
