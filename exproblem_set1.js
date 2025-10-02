@@ -177,6 +177,17 @@ const handleExamEnd = (message) => {
     const submitBtn = document.getElementById("submit-btn");
     if (submitBtn) submitBtn.style.display = "none";
 
+    // 「結果に戻る」ボタン
+    const backBtn = document.createElement("button");
+    backBtn.id = "back-to-result";
+    backBtn.textContent = "結果に戻る";
+    backBtn.style.position = "fixed";
+    backBtn.style.top = "12px";
+    backBtn.style.left = "12px";
+    backBtn.style.zIndex = "1001";
+    backBtn.style.padding = "8px 12px";
+    document.body.appendChild(backBtn);
+
     backBtn.addEventListener("click", () => {
       localStorage.removeItem("exReviewMode");
       window.location.href = "exresult.html";
