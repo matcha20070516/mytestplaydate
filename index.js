@@ -50,6 +50,56 @@ function start() {
   window.location.href = "exrule.html";
 }
 
+  const slides = [
+      { img: 'images/howto1.png', desc: '説明文1' },
+      { img: 'images/howto2.png', desc: '説明文2' },
+      { img: 'images/howto3.png', desc: '説明文3' },
+      { img: 'images/howto4.png', desc: '説明文4' }
+    ];
+    let currentSlide = 0;
+
+    // DOM取得
+    const howtoImg = document.getElementById('howtoImg');
+    const slideDesc = document.getElementById('slideDesc');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const indicator = document.getElementById('indicator');
+
+    function renderIndicator() {
+      indicator.innerHTML = '';
+      for (let i = 0; i < slides.length; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'dot' + (i === currentSlide ? ' active' : '');
+        indicator.appendChild(dot);
+      }
+    }
+
+    function updateSlide() {
+      howtoImg.src = slides[currentSlide].img;
+      slideDesc.innerHTML = slides[currentSlide].desc;
+      prevBtn.disabled = currentSlide === 0;
+      nextBtn.disabled = currentSlide === slides.length - 1;
+      renderIndicator();
+    }
+
+    prevBtn.onclick = function() {
+      if (currentSlide > 0) { currentSlide--; updateSlide(); }
+    };
+    nextBtn.onclick = function() {
+      if (currentSlide < slides.length - 1) { currentSlide++; updateSlide(); }
+    };
+
+    function openHelp() {
+      document.getElementById('modalHelp').classList.add('show');
+      currentSlide = 0;
+      updateSlide();
+    }
+    function closeHelp() {
+      document.getElementById('modalHelp').classList.remove('show');
+    }
+    // 初期表示
+    updateSlide();
+
 function adjustViewportHeight() {
   const vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty('--vh', `${vh}px`);
