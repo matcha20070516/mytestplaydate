@@ -355,12 +355,13 @@ tr.incorrect {
 
 .howto-img {
   width: 100%;
-  max-width: 540px;     /* 画像の最大横幅を指定（必要に応じて調整） */
-  height: auto;         /* 高さは自動調整 */
+  max-width: 300px;   /* ←好みで大きさ調整 */
+  aspect-ratio: 1 / 1;
+  border: 2px solid #333;
+  background: #fff;
   border-radius: 8px;
-  margin-bottom: 12px;
-  object-fit: contain;  /* 画像の縦横比を保つ */
-  display: block;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 /* 拡大モーダルのスタイル */
