@@ -50,16 +50,18 @@ function start() {
   window.location.href = "exrule.html";
 }
 
-  const slides = [
-      { img: 'images/howto1.png', desc: '説明文1' },
-      { img: 'images/Howto2.png', desc: 'ここに説明文が入ります' },
-      { img: 'images/howto3.png', desc: '説明文3' },
-      { img: 'images/howto4.png', desc: '説明文4' }
+ // 説明文だけ配列で管理
+    const slideDescriptions = [
+      '説明文1',
+      '説明文2',
+      '説明文3',
+      '説明文4'
     ];
+    const totalSlides = slideDescriptions.length;
     let currentSlide = 0;
 
     // DOM取得
-    const howtoImg = document.getElementById('howtoImg');
+    const howtoImg = document.getElementById('howto-img');
     const slideDesc = document.getElementById('slideDesc');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
@@ -67,7 +69,7 @@ function start() {
 
     function renderIndicator() {
       indicator.innerHTML = '';
-      for (let i = 0; i < slides.length; i++) {
+      for (let i = 0; i < totalSlides; i++) {
         const dot = document.createElement('div');
         dot.className = 'dot' + (i === currentSlide ? ' active' : '');
         indicator.appendChild(dot);
@@ -75,10 +77,10 @@ function start() {
     }
 
     function updateSlide() {
-      howtoImg.src = slides[currentSlide].img;
-      slideDesc.innerHTML = slides[currentSlide].desc;
+      howtoImg.src = `Howto${currentSlide + 1}.png`; // ←あなたのやり方でOK！
+      slideDesc.innerHTML = slideDescriptions[currentSlide];
       prevBtn.disabled = currentSlide === 0;
-      nextBtn.disabled = currentSlide === slides.length - 1;
+      nextBtn.disabled = currentSlide === totalSlides - 1;
       renderIndicator();
     }
 
@@ -86,7 +88,7 @@ function start() {
       if (currentSlide > 0) { currentSlide--; updateSlide(); }
     };
     nextBtn.onclick = function() {
-      if (currentSlide < slides.length - 1) { currentSlide++; updateSlide(); }
+      if (currentSlide < totalSlides - 1) { currentSlide++; updateSlide(); }
     };
 
     function openHelp() {
