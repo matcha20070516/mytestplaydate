@@ -76,8 +76,7 @@ function start() {
       }
     }
 
-    function updateSlide() {
-      howtoImg.src = `Howto${currentSlide + 1}.png`; // ←あなたのやり方でOK！
+    function updateSlide() {howtoImg.src = `Howto${currentSlide + 1}.png`;
       slideDesc.innerHTML = slideDescriptions[currentSlide];
       prevBtn.disabled = currentSlide === 0;
       nextBtn.disabled = currentSlide === totalSlides - 1;
