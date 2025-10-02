@@ -1,6 +1,6 @@
-
+const total = 20;
 let current = 1;
-let timeLimit = 1 * 60; // 制限時間：30分（秒）
+let timeLimit = 30 * 60; // 制限時間：30分（秒）
 
 const answers = Array(total).fill("");
 
@@ -164,26 +164,22 @@ const handleExamEnd = (message) => {
   localStorage.removeItem("exTimeLeft");
 
   const reviewMode = localStorage.getItem("exReviewMode") === "true";
-
-  // 🔹 ここは「問題見返すモード」のみ発動
   if (reviewMode) {
+    // タイマー非表示
     const t = document.getElementById("timer");
     if (t) t.style.display = "none";
+
+    // 入力欄を触れなくする
     const ans = document.getElementById("answer");
     if (ans) ans.disabled = true;
-    const submitBtn = document.getElementById("submit-btn");
-    if (submitBtn) submitBtn.style.display = "none";
 
-    // 「戻るボタンを作らない」ならこれでOK
-    return;
+    backBtn.addEventListener("click", () => {
+      localStorage.removeItem("exReviewMode");
+      window.location.href = "exresult.html";
+    });
   }
-  loadQuestion();
 
-  // 🔹 通常試験モード → 結果画面へ遷移
-  alert(message);
-  window.location.href = "exresult.html";
-};
-  
+  // ここで完了
   alert(message);
   location.href = "exresult.html";
 };
@@ -199,17 +195,30 @@ window.onload = () => {
     lockNotice.textContent = "この模試の結果は確定済みです。解答を変更できません。";
     lockNotice.style.color = "red";
     document.querySelector(".quiz-area")?.prepend(lockNotice);
+
+    // 🔹 終了後は保存された経過時間を使ってタイマーを固定表示
+    const elapsed = parseInt(localStorage.getItem("exElapsedTime") || "0", 10);
+    const fixedTimeLeft = (30 * 60) - elapsed;
+    const m = Math.floor(fixedTimeLeft / 60);
+    const s = fixedTimeLeft % 60;
+    document.getElementById("timer").textContent =
+      `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+
+    // 🔹 問題内容をロードして表示
+    loadQuestion();
+
+  } else {
+    // 通常プレイ時だけタイマーを動かす
+    loadQuestion();
+    updateTimer();
+    timerInterval = setInterval(updateTimer, 1000);
+    setInterval(autoSaveState, 1000);
+
+    document.getElementById("answer").addEventListener("input", () => {
+      saveCurrentAnswer();
+      updateChapters();
+    });
   }
-
-  loadQuestion();
-  updateTimer();
-  timerInterval = setInterval(updateTimer, 1000);
-  setInterval(autoSaveState, 1000);
-
-  document.getElementById("answer").addEventListener("input", () => {
-    saveCurrentAnswer();
-    updateChapters();
-  });
 
   // 終了確認モーダル関連のイベント登録
   document.getElementById("submit-btn").onclick = confirmAndFinish;
@@ -217,16 +226,4 @@ window.onload = () => {
   document.getElementById("confirm-no").onclick = () => {
     document.getElementById("confirm-overlay").style.display = "none";
   };
-
-  // 問題画像クリックでモーダル拡大
-  document.getElementById("quiz-img").addEventListener("click", function () {
-    const modal = document.getElementById("imageModal");
-    const modalImg = document.getElementById("modalImage");
-    modal.style.display = "block";
-    modalImg.src = this.src;
-  });
-
-  document.getElementById("imageModal").addEventListener("click", function () {
-    this.style.display = "none";
-  });
 };
