@@ -52,7 +52,7 @@ function start() {
 
   const slides = [
       { img: 'images/howto1.png', desc: '説明文1' },
-      { img: 'Howto2.png', desc: 'ここに説明文が入ります' },
+      { img: 'images/Howto2.png', desc: 'ここに説明文が入ります' },
       { img: 'images/howto3.png', desc: '説明文3' },
       { img: 'images/howto4.png', desc: '説明文4' }
     ];
