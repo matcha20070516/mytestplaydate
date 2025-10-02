@@ -343,8 +343,8 @@ tr.incorrect {
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-  max-width: 90vw;      /* 画面幅の90%まで広げる */
-  max-height: 90vh;     /* 画面高の90%まで広げる */
+  max-width: 80vw;      /* 画面幅の90%まで広げる */
+  max-height: 80vh;     /* 画面高の90%まで広げる */
   padding: 24px 32px;
   text-align: center;
   position: relative;
@@ -354,7 +354,7 @@ tr.incorrect {
 }
 
 .howto-img {
-  width: 100%;
+  width: 80%;
   max-width: 300px;   /* ←好みで大きさ調整 */
   aspect-ratio: 1 / 1;
   border: 2px solid #333;
