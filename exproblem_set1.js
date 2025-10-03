@@ -186,7 +186,7 @@ const confirmAndFinish = () => {
   document.getElementById("confirm-overlay").style.display = "flex";
 };
 const timeUp = () => handleExamEnd("時間切れです。結果画面に移動します。");
-const finishExam = () => handleExamEnd("試験終了です。結果画面に遷移します。");
+const finishExam = () => handleExamEnd("結果画面に遷移します。");
 };
 
 window.onload = () => {
