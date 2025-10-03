@@ -187,7 +187,6 @@ const confirmAndFinish = () => {
 };
 const timeUp = () => handleExamEnd("時間切れです。結果画面に移動します。");
 const finishExam = () => handleExamEnd("結果画面に遷移します。");
-};
 
 window.onload = () => {
   if (isLocked()) {
