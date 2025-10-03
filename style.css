@@ -355,7 +355,7 @@ tr.incorrect {
 
 .howto-img {
   width: 80%;
-  max-width: 300px;   /* ←好みで大きさ調整 */
+  max-width: 180px;  /* ここを変更！ */
   aspect-ratio: 1 / 1;
   border: 2px solid #333;
   background: #fff;
