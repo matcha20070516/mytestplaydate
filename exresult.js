@@ -5,24 +5,24 @@ window.addEventListener("DOMContentLoaded", () => {
   const username = localStorage.getItem(`${prefix}Username`) || "名無し";
   const score = localStorage.getItem(`${prefix}Score`) || localStorage.getItem("exScore") || "0";
   const displaySetName = localStorage.getItem(`${prefix}SetName`) || setName;
-  const attemptCount = localStorage.getItem(`${prefix}AttemptCount`) || "1";
 
   document.getElementById("username").textContent = username;
   document.getElementById("score").textContent = score;
-  
   document.getElementById("setname").textContent = displaySetName;
-// 経過時間取得＆表示
-const elapsedSec =
-  Number(localStorage.getItem(`${prefix}ElapsedTime`)) ||
-  Number(localStorage.getItem("exElapsedTime")) ||
-  0;
 
-function formatTime(sec) {
-  const m = Math.floor(sec / 60);
-  const s = sec % 60;
-  return `${m}分${s}秒`;
-}
-document.getElementById("elapsedTimeDisplay").textContent = formatTime(elapsedSec);
+  // 経過時間取得＆表示
+  const elapsedSec =
+    Number(localStorage.getItem(`${prefix}ElapsedTime`)) ||
+    Number(localStorage.getItem("exElapsedTime")) ||
+    0;
+
+  function formatTime(sec) {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `${m}分${s}秒`;
+  }
+  document.getElementById("elapsedTimeDisplay").textContent = formatTime(elapsedSec);
+
   const reviewBtn = document.getElementById("review-btn");
   if (reviewBtn) {
     reviewBtn.addEventListener("click", () => {
