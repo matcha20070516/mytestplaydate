@@ -66,15 +66,15 @@ window.addEventListener("DOMContentLoaded", () => {
   );
   document.getElementById("share-link").href = `https://twitter.com/intent/tweet?text=${tweetText}`;
 
-  // detailリンク
-  let detailPage = "exresult_detail_M.html";
-  if (setName.includes("ろい")) {
-    detailPage = "exresult_detail_ろい.html";
-  } else if (setName.includes("set3")) {
-    detailPage = "exresult_detail_set3.html";
-  }
-  const detailLink = document.getElementById("detail-link");
-  if (detailLink) {
-    detailLink.href = detailPage;
-  }
-});
+// detailリンク
+let detailPage = "exresult_detail_M.html";
+if (setName === "謎検模試_M") {
+  detailPage = "exresult_detail_M.html";
+} else if (setName === "謎検模試test") {
+  detailPage = "exresult_detail_test.html";
+} else if (setName === "謎検模試_set3") {
+  detailPage = "exresult_detail_set3.html";
+} else {
+  // その他はデフォルト
+  detailPage = "exresult_detail_M.html";
+}
