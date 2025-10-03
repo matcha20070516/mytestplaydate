@@ -12,35 +12,44 @@ window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("attemptCountDisplay").textContent = `${attemptCount}回目`;
   document.getElementById("setname").textContent = displaySetName;
 
- const reviewBtn = document.getElementById("review-btn");
-if (reviewBtn) {
-  reviewBtn.addEventListener("click", () => {
-    localStorage.setItem("exReviewMode", "true");
-    localStorage.setItem("exCurrent", "1"); // 1問目から開始
+  const reviewBtn = document.getElementById("review-btn");
+  if (reviewBtn) {
+    reviewBtn.addEventListener("click", () => {
+      localStorage.setItem("exReviewMode", "true");
+      localStorage.setItem("exCurrent", "1"); // 1問目から開始
 
-    // 🔹 prefix付きの SetName を参照
-    const currentExamSet = localStorage.getItem("currentExamSet");
-    const setName = localStorage.getItem(`ex_${currentExamSet}_SetName`);
+      // 🔹 prefix付きの SetName を参照
+      const currentExamSet = localStorage.getItem("currentExamSet");
+      const setName = localStorage.getItem(`ex_${currentExamSet}_SetName`);
 
-    let targetPage = "";
-    switch (setName) {
-      case "謎検模試_M":
-        targetPage = "exproblem_set1.html";
-        break;
-      case "謎検模試test":
-        targetPage = "exproblem_set2.html";
-        break;
-      case "謎検模試_set3":
-        targetPage = "exproblem_set3.html";
-        break;
-      default:
-        targetPage = "exproblem_set1.html"; // fallback
-        break;
-    }
+      let targetPage = "";
+      switch (setName) {
+        case "謎検模試_M":
+          targetPage = "exproblem_set1.html";
+          break;
+        case "謎検模試test":
+          targetPage = "exproblem_set2.html";
+          break;
+        case "謎検模試_set3":
+          targetPage = "exproblem_set3.html";
+          break;
+        default:
+          targetPage = "exproblem_set1.html"; // fallback
+          break;
+      }
 
-    window.location.href = targetPage;
-  });
-}
+      window.location.href = targetPage;
+    });
+  }
+
+  // ホームに戻るボタンの処理
+  const homeBtn = document.getElementById("home-btn");
+  if (homeBtn) {
+    homeBtn.addEventListener("click", () => {
+      window.location.href = "index.html";
+    });
+  }
+
   const tweetText = encodeURIComponent(
     `『${displaySetName}』の結果は【${score}点】でした！ #謎解き #TExAM`
   );
