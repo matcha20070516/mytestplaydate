@@ -71,7 +71,7 @@
     width: 90vw;
     max-height: 80vh;
     overflow-y: auto;
-    padding: 32px 24px;
+    padding: 24px 14px;
     text-align: center;
     position: relative;
     display: flex;
@@ -129,14 +129,38 @@
       box-sizing: border-box;
     }
     .slide-nav {
-      display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 12px;
-    }
-    .slide-btn {
-      background: #5da3fa; color: white; border: none; border-radius: 8px;
-      width: 38px; height: 38px; font-size: 1.4em; cursor: pointer;
-    }
-    .slide-btn:disabled { background: #cccccc; cursor: not-allowed; }
-    .slide-btn:hover:not(:disabled) { background: #3c84e6; }
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0;
+    box-sizing: border-box;
+    margin-bottom: 12px;
+  }
+
+  .slide-btn {
+    background: #5da3fa;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    width: 38px;
+    height: 38px;
+    font-size: 1.4em;
+    cursor: pointer;
+    margin: 0 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .slide-btn:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+  }
+
+  .slide-btn:hover:not(:disabled) {
+    background: #3c84e6;
+  }
     .indicator { display: flex; gap: 6px; margin: 8px 0; }
     .dot { width: 10px; height: 10px; border-radius: 50%; background: #d3d3d3; }
     .dot.active { background: #5da3fa; }
