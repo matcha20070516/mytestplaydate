@@ -9,7 +9,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("username").textContent = username;
   document.getElementById("score").textContent = score;
-  document.getElementById("attemptCountDisplay").textContent = `${attemptCount}回目`;
+  
   document.getElementById("setname").textContent = displaySetName;
 // 経過時間取得＆表示
 const elapsedSec =
