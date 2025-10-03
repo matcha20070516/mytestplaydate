@@ -186,7 +186,14 @@ const confirmAndFinish = () => {
   document.getElementById("confirm-overlay").style.display = "flex";
 };
 const timeUp = () => handleExamEnd("時間切れです。結果画面に移動します。");
-const finishExam = () => handleExamEnd("試験終了です。結果画面に遷移します。");
+const finishExam = () => {
+  const reviewMode = localStorage.getItem("exReviewMode") === "true";
+  if (reviewMode) {
+    handleExamEnd("レビューが終了しました。結果画面に戻ります。");
+  } else {
+    handleExamEnd("試験終了です。結果画面に遷移します。");
+  }
+};
 
 window.onload = () => {
   if (isLocked()) {
