@@ -11,7 +11,18 @@ window.addEventListener("DOMContentLoaded", () => {
   document.getElementById("score").textContent = score;
   document.getElementById("attemptCountDisplay").textContent = `${attemptCount}回目`;
   document.getElementById("setname").textContent = displaySetName;
+// 経過時間取得＆表示
+const elapsedSec =
+  Number(localStorage.getItem(`${prefix}ElapsedTime`)) ||
+  Number(localStorage.getItem("exElapsedTime")) ||
+  0;
 
+function formatTime(sec) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m}分${s}秒`;
+}
+document.getElementById("elapsedTimeDisplay").textContent = formatTime(elapsedSec);
   const reviewBtn = document.getElementById("review-btn");
   if (reviewBtn) {
     reviewBtn.addEventListener("click", () => {
