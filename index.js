@@ -73,6 +73,22 @@ function updateSlide() {
   nextBtn.disabled = currentSlide === totalSlides - 1;
   renderIndicator();
 }
+
+// モーダル背景クリックで閉じる
+const modalHelp = document.getElementById('modalHelp');
+const modalContent = document.querySelector('.modal-content');
+
+modalHelp.addEventListener('click', function (e) {
+  if (e.target === modalHelp) {
+    closeHelp();
+  }
+});
+
+// モーダル内クリックは閉じない
+modalContent.addEventListener('click', function (e) {
+  e.stopPropagation();
+});
+
     function renderIndicator() {
       indicator.innerHTML = '';
       for (let i = 0; i < totalSlides; i++) {
