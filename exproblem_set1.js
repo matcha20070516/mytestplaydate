@@ -97,23 +97,39 @@ const updateNavButtons = () => {
   document.getElementById("forward-btn").style.visibility = current < total ? "visible" : "hidden";
 };
 
+const isAnswerValid = (answer, format) => {
+  switch (format) {
+    case "ひらがな":
+      return /^[ぁ-んー]+$/.test(answer);
+    case "カタカナ":
+      return /^[ァ-ヶー]+$/.test(answer);
+    case "半角数字":
+      return /^[0-9]+$/.test(answer);
+    case "半角英字":
+      return /^[A-Za-z]+$/.test(answer);
+    default:
+      return true;
+  }
+};
+
 const updateChapters = () => {
   const chapterContainer = document.getElementById("chapters");
   chapterContainer.innerHTML = "";
-
   for (let i = 0; i < total; i++) {
     const btn = document.createElement("button");
     btn.textContent = `${i + 1}`;
     btn.className = "chapter-btn";
-
     if (i + 1 === current) btn.classList.add("current");
 
-    const input = answers[i].trim();
+    const ans = answers[i].trim();
+    const format = answerFormats[i];
 
-    // 🔍 有効な文字（ひらがな・カタカナ・半角英数字）を含む場合だけ赤マーク
-    const validPattern = /[\u3040-\u309F\u30A0-\u30FFA-Za-z0-9]/;
-    if (validPattern.test(input)) {
-      btn.classList.add("highlight");
+    if (ans !== "") {
+      if (isAnswerValid(ans, format)) {
+        btn.classList.add("answered"); // 緑
+      } else {
+        btn.classList.add("invalid"); // 赤（新規）
+      }
     }
 
     btn.onclick = () => {
@@ -122,7 +138,6 @@ const updateChapters = () => {
       localStorage.setItem("exCurrent", current.toString());
       loadQuestion();
     };
-
     chapterContainer.appendChild(btn);
   }
 };
