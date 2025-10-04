@@ -33,6 +33,26 @@ let timerInterval = null;
 // ロック判定関数
 const isLocked = () => localStorage.getItem("exResultLocked") === "true";
 
+// 解答形式チェック関数
+const isValidFormat = (answer, format) => {
+  if (!answer || answer.trim() === "") return true; // 空欄はチェックしない
+  
+  switch(format) {
+    case "半角数字":
+      return /^[0-9]+$/.test(answer);
+    case "ひらがな":
+      return /^[ぁ-ん]+$/.test(answer);
+    case "カタカナ":
+      return /^[ァ-ヶー]+$/.test(answer);
+    case "漢字":
+      return /^[一-龯]+$/.test(answer);
+    case "英字":
+      return /^[a-zA-Z]+$/.test(answer);
+    default:
+      return true;
+  }
+};
+
 // 新規スタート判定
 const isFreshStart = localStorage.getItem("exFreshStart") === "true";
 if (isFreshStart) {
@@ -81,41 +101,43 @@ const loadQuestion = () => {
   document.getElementById("quiz-img").src = `mq${current}.PNG`;
   document.getElementById("answer").value = answers[current - 1] || "";
 
-  // ここで解答形式表示も更新
+  // 解答形式表示を更新
   const formatSpan = document.getElementById("answer-format");
   formatSpan.textContent = answerFormats[current - 1] || "";
 
   // ロック時は入力不可
   document.getElementById("answer").disabled = isLocked();
 
+  // リアルタイムで形式チェック
+  checkCurrentAnswerFormat();
+
   updateNavButtons();
   updateChapters();
+};
+
+// 現在の解答の形式チェックとフィードバック表示
+const checkCurrentAnswerFormat = () => {
+  const answerInput = document.getElementById("answer");
+  const formatSpan = document.getElementById("answer-format");
+  const currentAnswer = answerInput.value.trim();
+  const currentFormat = answerFormats[current - 1];
+  
+  if (currentAnswer && !isValidFormat(currentAnswer, currentFormat)) {
+    answerInput.style.borderColor = "#e53935";
+    answerInput.style.backgroundColor = "#ffebee";
+    formatSpan.style.color = "#e53935";
+    formatSpan.style.fontWeight = "bold";
+  } else {
+    answerInput.style.borderColor = "#ccc";
+    answerInput.style.backgroundColor = "white";
+    formatSpan.style.color = "#666";
+    formatSpan.style.fontWeight = "normal";
+  }
 };
 
 const updateNavButtons = () => {
   document.getElementById("back-btn").style.visibility = current > 1 ? "visible" : "hidden";
   document.getElementById("forward-btn").style.visibility = current < total ? "visible" : "hidden";
-};
-
-const isAnswerValid = (answer, format) => {
-  if (!answer) return false;
-
-  switch (format) {
-    case "ひらがな":
-      // ひらがな＋長音（ー）＋小文字OK
-      return /^[ぁ-んー]+$/.test(answer);
-    case "カタカナ":
-      // カタカナ＋長音＋「ヴ」もOK
-      return /^[ァ-ヶーヴ]+$/.test(answer);
-    case "半角数字":
-      // 半角数字のみ（全角数字は×）
-      return /^[0-9]+$/.test(answer);
-    case "半角英語":
-      // 英大文字・小文字（半角のみ）
-      return /^[A-Za-z]+$/.test(answer);
-    default:
-      return true;
-  }
 };
 
 const updateChapters = () => {
@@ -125,19 +147,20 @@ const updateChapters = () => {
     const btn = document.createElement("button");
     btn.textContent = `${i + 1}`;
     btn.className = "chapter-btn";
+    
+    // 現在の問題
     if (i + 1 === current) btn.classList.add("current");
-
-    const ans = answers[i].trim();
-    const format = answerFormats[i];
-
-    if (ans !== "") {
-      if (isAnswerValid(ans, format)) {
-        btn.classList.add("answered"); // 緑
+    
+    // 解答済みかつ形式が正しい
+    if (answers[i].trim() !== "") {
+      if (isValidFormat(answers[i], answerFormats[i])) {
+        btn.classList.add("answered");
       } else {
-        btn.classList.add("invalid"); // 赤（新規）
+        // 解答形式が間違っている場合は赤色
+        btn.classList.add("invalid");
       }
     }
-
+    
     btn.onclick = () => {
       saveCurrentAnswer();
       current = i + 1;
@@ -147,6 +170,7 @@ const updateChapters = () => {
     chapterContainer.appendChild(btn);
   }
 };
+
 const back = () => {
   saveCurrentAnswer();
   if (current > 1) {
@@ -196,28 +220,55 @@ const handleExamEnd = (message) => {
 
   const reviewMode = localStorage.getItem("exReviewMode") === "true";
   if (reviewMode) {
-    // タイマー非表示
     const t = document.getElementById("timer");
     if (t) t.style.display = "none";
 
-    // 入力欄を触れなくする
     const ans = document.getElementById("answer");
     if (ans) ans.disabled = true;
 
-    // 「終了」ボタンを隠す
     const submitBtn = document.getElementById("submit-btn");
     if (submitBtn) submitBtn.style.display = "none";
   }
 
-  // ここで完了
   alert(message);
   location.href = "exresult.html";
 };
+
 const confirmAndFinish = () => {
+  // 形式エラーがある場合は警告
+  let invalidCount = 0;
+  for (let i = 0; i < total; i++) {
+    if (answers[i].trim() !== "" && !isValidFormat(answers[i], answerFormats[i])) {
+      invalidCount++;
+    }
+  }
+  
+  if (invalidCount > 0) {
+    const confirmMsg = `解答形式が正しくない問題が${invalidCount}問あります。\nこのまま終了しますか？`;
+    if (!confirm(confirmMsg)) {
+      return;
+    }
+  }
+  
   document.getElementById("confirm-overlay").style.display = "flex";
 };
+
 const timeUp = () => handleExamEnd("時間切れです。結果画面に移動します。");
 const finishExam = () => handleExamEnd("結果画面に遷移します。");
+
+// キーボードショートカット
+document.addEventListener("keydown", (e) => {
+  if (isLocked()) return;
+  
+  // 左矢印キー: 前の問題へ
+  if (e.key === "ArrowLeft" && current > 1) {
+    back();
+  }
+  // 右矢印キー: 次の問題へ
+  if (e.key === "ArrowRight" && current < total) {
+    forward();
+  }
+});
 
 window.onload = () => {
   if (isLocked()) {
@@ -226,7 +277,6 @@ window.onload = () => {
     lockNotice.style.color = "red";
     document.querySelector(".quiz-area")?.prepend(lockNotice);
 
-    // 🔹 終了後は保存された経過時間を使ってタイマーを固定表示
     const elapsed = parseInt(localStorage.getItem("exElapsedTime") || "0", 10);
     const fixedTimeLeft = (30 * 60) - elapsed;
     const m = Math.floor(fixedTimeLeft / 60);
@@ -234,34 +284,46 @@ window.onload = () => {
     document.getElementById("timer").textContent =
       `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
 
-    // 🔹 問題内容をロードして表示
     loadQuestion();
 
   } else {
-    // 通常プレイ時だけタイマーを動かす
     loadQuestion();
     updateTimer();
     timerInterval = setInterval(updateTimer, 1000);
     setInterval(autoSaveState, 1000);
 
-    document.getElementById("answer").addEventListener("input", () => {
+    // 解答形式チェック（日本語入力確定時のみ）
+    const answerInput = document.getElementById("answer");
+    let composing = false;
+    
+    answerInput.addEventListener("compositionstart", () => {
+      composing = true;
+    });
+    
+    answerInput.addEventListener("compositionend", () => {
+      composing = false;
       saveCurrentAnswer();
+      checkCurrentAnswerFormat();
       updateChapters();
+    });
+    
+    answerInput.addEventListener("input", () => {
+      if (!composing) {
+        saveCurrentAnswer();
+        checkCurrentAnswerFormat();
+        updateChapters();
+      }
     });
   }
 
-  // レビュー（review）モード判定
   const reviewMode = localStorage.getItem("exReviewMode") === "true";
   if (reviewMode) {
-    // レビュー時は終了ボタンを押したら即、結果画面に遷移
     const submitBtn = document.getElementById("submit-btn");
     if (submitBtn) submitBtn.onclick = finishExam;
 
-    // モーダル自体も不要なら非表示にする
     const overlay = document.getElementById("confirm-overlay");
     if (overlay) overlay.style.display = "none";
   } else {
-    // 通常時は確認モーダルを使う
     document.getElementById("submit-btn").onclick = confirmAndFinish;
     document.getElementById("confirm-yes").onclick = finishExam;
     document.getElementById("confirm-no").onclick = () => {
