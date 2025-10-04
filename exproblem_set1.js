@@ -98,14 +98,20 @@ const updateNavButtons = () => {
 };
 
 const isAnswerValid = (answer, format) => {
+  if (!answer) return false;
+
   switch (format) {
     case "ひらがな":
+      // ひらがな＋長音（ー）＋小文字OK
       return /^[ぁ-んー]+$/.test(answer);
     case "カタカナ":
-      return /^[ァ-ヶー]+$/.test(answer);
+      // カタカナ＋長音＋「ヴ」もOK
+      return /^[ァ-ヶーヴ]+$/.test(answer);
     case "半角数字":
+      // 半角数字のみ（全角数字は×）
       return /^[0-9]+$/.test(answer);
-    case "半角英字":
+    case "半角英語":
+      // 英大文字・小文字（半角のみ）
       return /^[A-Za-z]+$/.test(answer);
     default:
       return true;
