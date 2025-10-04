@@ -173,10 +173,9 @@ const handleExamEnd = (message) => {
     const ans = document.getElementById("answer");
     if (ans) ans.disabled = true;
 
-    backBtn.addEventListener("click", () => {
-      localStorage.removeItem("exReviewMode");
-      window.location.href = "exresult.html";
-    });
+    // 「終了」ボタンを隠す
+    const submitBtn = document.getElementById("submit-btn");
+    if (submitBtn) submitBtn.style.display = "none";
   }
 
   // ここで完了
@@ -187,7 +186,7 @@ const confirmAndFinish = () => {
   document.getElementById("confirm-overlay").style.display = "flex";
 };
 const timeUp = () => handleExamEnd("時間切れです。結果画面に移動します。");
-const finishExam = () => handleExamEnd("試験終了です。結果画面に遷移します。");
+const finishExam = () => handleExamEnd("結果画面に遷移します。");
 
 window.onload = () => {
   if (isLocked()) {
@@ -220,10 +219,22 @@ window.onload = () => {
     });
   }
 
-  // 終了確認モーダル関連のイベント登録
-  document.getElementById("submit-btn").onclick = confirmAndFinish;
-  document.getElementById("confirm-yes").onclick = finishExam;
-  document.getElementById("confirm-no").onclick = () => {
-    document.getElementById("confirm-overlay").style.display = "none";
-  };
+  // レビュー（review）モード判定
+  const reviewMode = localStorage.getItem("exReviewMode") === "true";
+  if (reviewMode) {
+    // レビュー時は終了ボタンを押したら即、結果画面に遷移
+    const submitBtn = document.getElementById("submit-btn");
+    if (submitBtn) submitBtn.onclick = finishExam;
+
+    // モーダル自体も不要なら非表示にする
+    const overlay = document.getElementById("confirm-overlay");
+    if (overlay) overlay.style.display = "none";
+  } else {
+    // 通常時は確認モーダルを使う
+    document.getElementById("submit-btn").onclick = confirmAndFinish;
+    document.getElementById("confirm-yes").onclick = finishExam;
+    document.getElementById("confirm-no").onclick = () => {
+      document.getElementById("confirm-overlay").style.display = "none";
+    };
+  }
 };
