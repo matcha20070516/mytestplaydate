@@ -331,3 +331,11 @@ window.onload = () => {
     };
   }
 };
+if (current < total) {
+  const nextImg = new Image();
+  nextImg.src = `mq${current + 1}.PNG`;
+}
+if (current > 1) {
+  const prevImg = new Image();
+  prevImg.src = `mq${current - 1}.PNG`;
+}
