@@ -216,7 +216,7 @@ const handleExamEnd = (message) => {
     localStorage.getItem("exUsername") ||
     "名無し";
 
-  const setName = "謎検模試_M"; // set1専用の模試名
+  const setName = localStorage.getItem("exSetName") || "謎検模試_M";
   const score = calculateScore(answers);
   const grade = getGrade(score);
 
