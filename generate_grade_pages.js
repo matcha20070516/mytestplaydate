@@ -139,14 +139,17 @@ const template = `<!DOCTYPE html>
   
   <script>
     window.addEventListener("DOMContentLoaded", () => {
+      // URLパラメータから情報取得
       const params = new URLSearchParams(window.location.search);
       const grade = params.get('grade') || '{{GRADE_NAME}}';
       const score = params.get('score') || '0';
-      const setName = params.get('set') || '';
       
-      const prefix = \`ex_\${setName}_\`;
-      const username = localStorage.getItem(\`\${prefix}Username\`) || localStorage.getItem("exUsername") || "名無し";
-      const displaySetName = localStorage.getItem(\`\${prefix}SetName\`) || setName;
+      // currentExamSetから正しいprefixを取得
+      const currentExamSet = localStorage.getItem("currentExamSet") || "";
+      const prefix = \`ex_\${currentExamSet}_\`;
+      
+      const username = localStorage.getItem(\`\${prefix}Username\`) || "名無し";
+      const displaySetName = localStorage.getItem(\`\${prefix}SetName\`) || currentExamSet;
 
       document.getElementById("username").textContent = username;
       document.getElementById("score").textContent = score;
