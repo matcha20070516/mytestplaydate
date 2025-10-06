@@ -216,7 +216,7 @@ const handleExamEnd = (message) => {
     localStorage.getItem("exUsername") ||
     "名無し";
 
-  const setName = localStorage.getItem("exSetName") || "謎検模試_M";
+  const setName = "謎検模試_M"; // set1専用の模試名
   const score = calculateScore(answers);
   const grade = getGrade(score);
 
@@ -243,11 +243,15 @@ const handleExamEnd = (message) => {
 
   alert(message);
   
-  // 級別ページへリダイレクト
+  // 共有用ページのURL
+  const shareUrl = `https://matcha20070516.github.io/mytestplaydate/share/grade-${grade.num}.html`;
+  
+  // 級別ページへリダイレクト（共有URLをパラメータで渡す）
   const params = new URLSearchParams({
     grade: grade.name,
     score: score,
-    set: setName
+    set: setName,
+    shareUrl: shareUrl
   });
   location.href = `exresult_grade${grade.num}.html?${params.toString()}`;
 };
