@@ -15,6 +15,7 @@
   <meta name="twitter:title" content="謎検模試 - 8級合格！" />
   <meta name="twitter:description" content="TExAMで8級に合格しました！" />
   <meta name="twitter:image" content="https://matcha20070516.github.io/mytestplaydate/result10.PNG" />
+  
   <style>
     body {
       margin: 0;
@@ -185,9 +186,10 @@
         });
       }
 
-      const currentUrl = index.html;
+      // 共有用URLを使用
+      const shareUrl = params.get('shareUrl') || window.location.href;
       const tweetText = encodeURIComponent(
-        `『${displaySetName}』の結果は【${score}点】で【${grade}】でした！ #謎解き #TExAM #${displaySetName.replace(/\s/g, '')}\n${currentUrl}`
+        `『${displaySetName}』の結果は【${score}点】で【${grade}】でした！ #謎解き #TExAM #${displaySetName.replace(/\s/g, '')}\n${shareUrl}`
       );
       document.getElementById("share-link").href = `https://twitter.com/intent/tweet?text=${tweetText}`;
 
