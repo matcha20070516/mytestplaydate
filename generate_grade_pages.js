@@ -25,6 +25,7 @@ const template = `<!DOCTYPE html>
   <meta property="og:title" content="謎検模試 - {{GRADE_NAME}}合格！" />
   <meta property="og:description" content="TExAMで{{GRADE_NAME}}に合格しました！" />
   <meta property="og:image" content="https://matcha20070516.github.io/mytestplaydate/{{IMAGE}}" />
+  <meta property="og:url" content="https://matcha20070516.github.io/mytestplaydate/" />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="謎検模試 - {{GRADE_NAME}}合格！" />
