@@ -124,15 +124,17 @@
       color: #888; cursor: pointer;
     }
     .howto-img {
-      width: 85%;
-      max-width: 600px; /* ここを調整！ */
-      aspect-ratio: 1 / 1;
-      border: 2px solid #333;
-      background: #fff;
-      border-radius: 8px;
-      overflow: hidden;
-      box-sizing: border-box;
-    }
+  width: 85%;
+  max-width: 600px;
+  aspect-ratio: 1 / 1;
+  border: 2px solid #333;
+  background: #fff;
+  border-radius: 8px;
+  object-fit: contain; /* 画像を潰さずに枠内に収める */
+  display: block;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
     .slide-nav {
     display: flex;
     justify-content: space-between;
