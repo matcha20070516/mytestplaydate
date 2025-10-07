@@ -294,6 +294,18 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
+// DOMContentLoadedでも試す
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("DOMContentLoaded発火");
+  const submitBtn = document.getElementById("submit-btn");
+  console.log("submit-btn要素:", submitBtn);
+  
+  if (submitBtn) {
+    submitBtn.onclick = confirmAndFinish;
+    console.log("イベント設定完了");
+  }
+});
+
 window.onload = () => {
   if (isLocked()) {
     const lockNotice = document.createElement("p");
