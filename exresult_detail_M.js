@@ -42,9 +42,37 @@ window.onload = () => {
   document.getElementById("result-summary").textContent = `正解数：${correctCount} / ${correctAnswers.length} 問, 合計得点：${totalScore} 点`;
 };
 
+// 級判定関数
+function getGrade(score) {
+  const s = parseInt(score);
+  if (s === 100) return { name: "1級", num: 1 };
+  if (s >= 90) return { name: "準1級", num: 2 };
+  if (s >= 80) return { name: "2級", num: 3 };
+  if (s >= 70) return { name: "準2級", num: 4 };
+  if (s >= 60) return { name: "3級", num: 5 };
+  if (s >= 50) return { name: "4級", num: 6 };
+  if (s >= 40) return { name: "5級", num: 7 };
+  if (s >= 30) return { name: "6級", num: 8 };
+  if (s >= 20) return { name: "7級", num: 9 };
+  return { name: "8級", num: 10 };
+}
+
 const backBtn = document.getElementById("back-to-result");
 if (backBtn) {
   backBtn.addEventListener("click", () => {
-    window.location.href = "exresult.html"; // ←サマリーに戻る
+    // 得点から級を判定して級別ページに戻る
+    const score = localStorage.getItem("exScore") || "0";
+    const grade = getGrade(score);
+    const setName = "謎検模試_M";
+    const shareUrl = `https://matcha20070516.github.io/mytestplaydate/share/grade-${grade.num}.html`;
+    
+    const params = new URLSearchParams({
+      grade: grade.name,
+      score: score,
+      set: setName,
+      shareUrl: shareUrl
+    });
+    
+    window.location.href = `exresult_grade${grade.num}.html?${params.toString()}`;
   });
 }
