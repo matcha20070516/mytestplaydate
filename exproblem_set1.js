@@ -257,6 +257,8 @@ const handleExamEnd = (message) => {
 };
 
 const confirmAndFinish = () => {
+  console.log("confirmAndFinish が呼ばれました");
+  
   let invalidCount = 0;
   for (let i = 0; i < total; i++) {
     if (answers[i].trim() !== "" && !isValidFormat(answers[i], answerFormats[i])) {
@@ -264,13 +266,17 @@ const confirmAndFinish = () => {
     }
   }
   
+  console.log("invalidCount:", invalidCount);
+  
   if (invalidCount > 0) {
     const confirmMsg = `解答形式が正しくない問題が${invalidCount}問あります。\nこのまま終了しますか？`;
     if (!confirm(confirmMsg)) {
+      console.log("キャンセルされました");
       return;
     }
   }
   
+  console.log("モーダルを表示します");
   document.getElementById("confirm-overlay").style.display = "flex";
 };
 
