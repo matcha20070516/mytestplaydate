@@ -1,25 +1,7 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const debugDiv = document.createElement("div");
-  debugDiv.id = "debug";
-  debugDiv.style.cssText = "position:fixed;top:0;left:0;background:yellow;padding:10px;z-index:9999;font-size:12px;";
-  debugDiv.textContent = "JS読み込み成功";
-  document.body.appendChild(debugDiv);
-  
-  const submitBtn = document.getElementById("submit-btn");
-  if (submitBtn) {
-    debugDiv.textContent += " / ボタン発見";
-    submitBtn.onclick = () => {
-      debugDiv.textContent += " / クリックされた";
-      confirmAndFinish();
-    };
-  } else {
-    debugDiv.textContent += " / ボタン見つからず";
-  }
-});
-
 const total = 20;
 let current = 1;
-let timeLimit = 30 * 60;
+const TOTAL_TIME = 30 * 60; // 30分（秒）
+let startTime; // 開始時刻
 
 const answers = Array(total).fill("");
 
@@ -82,18 +64,23 @@ const getGrade = (score) => {
   return { name: "8級", num: 10 };
 };
 
+// 新規スタート判定
 const isFreshStart = localStorage.getItem("exFreshStart") === "true";
 if (isFreshStart) {
   localStorage.removeItem("exFreshStart");
   localStorage.removeItem("exCurrent");
-  localStorage.removeItem("exElapsedTime");
+  localStorage.removeItem("exStartTime");
   localStorage.removeItem("exAnswers");
+  
+  // 新規開始時刻を記録
+  startTime = Date.now();
+  localStorage.setItem("exStartTime", startTime);
 } else {
+  // 保存された開始時刻を取得
+  startTime = parseInt(localStorage.getItem("exStartTime") || Date.now());
+  
   const savedCurrent = parseInt(localStorage.getItem("exCurrent") || "1", 10);
   current = savedCurrent;
-
-  const savedElapsed = parseInt(localStorage.getItem("exElapsedTime") || "0", 10);
-  timeLimit -= savedElapsed;
 
   const savedAnswers = JSON.parse(localStorage.getItem("exAnswers") || "[]");
   for (let i = 0; i < savedAnswers.length; i++) {
@@ -102,26 +89,29 @@ if (isFreshStart) {
 }
 
 const updateTimer = () => {
-  if (timeLimit <= 0) {
+  // 経過時間を計算（ミリ秒→秒）
+  const elapsedSec = Math.floor((Date.now() - startTime) / 1000);
+  const remainingSec = TOTAL_TIME - elapsedSec;
+  
+  if (remainingSec <= 0) {
     clearInterval(timerInterval);
     document.getElementById("timer").textContent = "終了";
     timeUp();
     return;
   }
-  const m = Math.floor(timeLimit / 60);
-  const s = timeLimit % 60;
+  
+  const m = Math.floor(remainingSec / 60);
+  const s = remainingSec % 60;
   document.getElementById("timer").textContent =
     `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
-  timeLimit--;
-
-  const elapsed = (30 * 60) - timeLimit;
-  localStorage.setItem("exElapsedTime", elapsed);
+  
+  // 経過時間を保存（結果画面用）
+  localStorage.setItem("exElapsedTime", elapsedSec);
 };
 
 const autoSaveState = () => {
   localStorage.setItem("exAnswers", JSON.stringify(answers));
   localStorage.setItem("exCurrent", current.toString());
-  localStorage.setItem("exTimeLeft", timeLimit.toString());
 };
 
 const loadQuestion = () => {
@@ -235,7 +225,7 @@ const handleExamEnd = (message) => {
     localStorage.getItem("exUsername") ||
     "名無し";
 
-  const setName = "謎検模試_M"; // set1専用の模試名
+  const setName = "謎検模試_M";
   const score = calculateScore(answers);
   const grade = getGrade(score);
 
@@ -246,7 +236,6 @@ const handleExamEnd = (message) => {
   localStorage.setItem("exResultLocked", "true");
 
   localStorage.removeItem("exCurrent");
-  localStorage.removeItem("exTimeLeft");
 
   const reviewMode = localStorage.getItem("exReviewMode") === "true";
   if (reviewMode) {
@@ -262,10 +251,8 @@ const handleExamEnd = (message) => {
 
   alert(message);
   
-  // 共有用ページのURL
   const shareUrl = `https://matcha20070516.github.io/mytestplaydate/share/grade-${grade.num}.html`;
   
-  // 級別ページへリダイレクト（共有URLをパラメータで渡す）
   const params = new URLSearchParams({
     grade: grade.name,
     score: score,
@@ -276,8 +263,6 @@ const handleExamEnd = (message) => {
 };
 
 const confirmAndFinish = () => {
-  console.log("confirmAndFinish が呼ばれました");
-  
   let invalidCount = 0;
   for (let i = 0; i < total; i++) {
     if (answers[i].trim() !== "" && !isValidFormat(answers[i], answerFormats[i])) {
@@ -285,17 +270,13 @@ const confirmAndFinish = () => {
     }
   }
   
-  console.log("invalidCount:", invalidCount);
-  
   if (invalidCount > 0) {
     const confirmMsg = `解答形式が正しくない問題が${invalidCount}問あります。\nこのまま終了しますか？`;
     if (!confirm(confirmMsg)) {
-      console.log("キャンセルされました");
       return;
     }
   }
   
-  console.log("モーダルを表示します");
   document.getElementById("confirm-overlay").style.display = "flex";
 };
 
@@ -313,18 +294,6 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-// DOMContentLoadedでも試す
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("DOMContentLoaded発火");
-  const submitBtn = document.getElementById("submit-btn");
-  console.log("submit-btn要素:", submitBtn);
-  
-  if (submitBtn) {
-    submitBtn.onclick = confirmAndFinish;
-    console.log("イベント設定完了");
-  }
-});
-
 window.onload = () => {
   if (isLocked()) {
     const lockNotice = document.createElement("p");
@@ -333,7 +302,7 @@ window.onload = () => {
     document.querySelector(".quiz-area")?.prepend(lockNotice);
 
     const elapsed = parseInt(localStorage.getItem("exElapsedTime") || "0", 10);
-    const fixedTimeLeft = (30 * 60) - elapsed;
+    const fixedTimeLeft = TOTAL_TIME - elapsed;
     const m = Math.floor(fixedTimeLeft / 60);
     const s = fixedTimeLeft % 60;
     document.getElementById("timer").textContent =
@@ -344,7 +313,7 @@ window.onload = () => {
   } else {
     loadQuestion();
     updateTimer();
-    timerInterval = setInterval(updateTimer, 1000);
+    timerInterval = setInterval(updateTimer, 100);
     setInterval(autoSaveState, 1000);
 
     const answerInput = document.getElementById("answer");
