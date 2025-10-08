@@ -1,3 +1,22 @@
+document.addEventListener("DOMContentLoaded", () => {
+  const debugDiv = document.createElement("div");
+  debugDiv.id = "debug";
+  debugDiv.style.cssText = "position:fixed;top:0;left:0;background:yellow;padding:10px;z-index:9999;font-size:12px;";
+  debugDiv.textContent = "JS読み込み成功";
+  document.body.appendChild(debugDiv);
+  
+  const submitBtn = document.getElementById("submit-btn");
+  if (submitBtn) {
+    debugDiv.textContent += " / ボタン発見";
+    submitBtn.onclick = () => {
+      debugDiv.textContent += " / クリックされた";
+      confirmAndFinish();
+    };
+  } else {
+    debugDiv.textContent += " / ボタン見つからず";
+  }
+});
+
 const total = 20;
 let current = 1;
 let timeLimit = 30 * 60;
