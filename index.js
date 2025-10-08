@@ -64,12 +64,14 @@ function start() {
   // 途中データがあるかチェック
   const hasSavedData = localStorage.getItem("exCurrent") || localStorage.getItem("exStartTime");
   
-  if (!hasSavedData) {
+  if (hasSavedData) {
+    // 途中から再開
+    alert("前回中断された状態から再開します。");
+  } else {
     // 新規開始の場合のみFreshStartフラグを立てる
     localStorage.setItem(`${prefix}_FreshStart`, "true");
     localStorage.setItem("exFreshStart", "true");
   }
-  // 途中データがある場合は何もせず、そのまま続きから
 
   localStorage.setItem(`${prefix}_Username`, name);
   localStorage.setItem(`${prefix}_SetName`, set);
