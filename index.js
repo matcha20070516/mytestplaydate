@@ -35,16 +35,15 @@ function start() {
     return;
   }
 
-  // 受験済みチェック
+  // 受験完了済みチェック（exResultLockedがtrueなら完了済み）
   const isCompleted = localStorage.getItem(`${set}_completed`) === "true";
+  const isLocked = localStorage.getItem("exResultLocked") === "true";
   
-  if (isCompleted) {
+  if (isCompleted && isLocked) {
     alert("この模試は既に受験済みです。結果画面に移動します。");
     
-    // currentExamSetを設定してから結果画面へ
     localStorage.setItem("currentExamSet", set);
     
-    // 級判定して級別ページへ
     const score = localStorage.getItem("exScore") || "0";
     const grade = getGrade(parseInt(score));
     const shareUrl = `https://matcha20070516.github.io/mytestplaydate/share/grade-${grade.num}.html`;
@@ -62,21 +61,15 @@ function start() {
 
   const prefix = `ex_${set}`;
 
-  // データをクリア（新規開始）
-  const exKeysToClear = [
-    "Username", "SetName", "Answers", "Score", "TimeLimit",
-    "ElapsedTime", "StartTime", "Progress", "CurrentPage", "Current", "ResultLocked"
-  ];
-  exKeysToClear.forEach(key => localStorage.removeItem(`${prefix}_${key}`));
-
-  const legacyKeys = [
-    "exAnswers", "exScore", "exElapsedTime", "exCurrent", "exResultLocked", 
-    "exStartTime", "exReviewMode"
-  ];
-  legacyKeys.forEach(key => localStorage.removeItem(key));
-
-  localStorage.setItem(`${prefix}_FreshStart`, "true");
-  localStorage.setItem("exFreshStart", "true"); // legacy用
+  // 途中データがあるかチェック
+  const hasSavedData = localStorage.getItem("exCurrent") || localStorage.getItem("exStartTime");
+  
+  if (!hasSavedData) {
+    // 新規開始の場合のみFreshStartフラグを立てる
+    localStorage.setItem(`${prefix}_FreshStart`, "true");
+    localStorage.setItem("exFreshStart", "true");
+  }
+  // 途中データがある場合は何もせず、そのまま続きから
 
   localStorage.setItem(`${prefix}_Username`, name);
   localStorage.setItem(`${prefix}_SetName`, set);
