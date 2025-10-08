@@ -234,6 +234,9 @@ const handleExamEnd = (message) => {
   localStorage.setItem("exAnswers", JSON.stringify(answers));
   localStorage.setItem("exSetName", setName);
   localStorage.setItem("exResultLocked", "true");
+  
+  // 受験済みフラグを保存
+  localStorage.setItem(`${setName}_completed`, "true");
 
   localStorage.removeItem("exCurrent");
 
