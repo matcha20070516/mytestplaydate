@@ -198,6 +198,33 @@
     <div class="slide-desc" id="slideDesc"></div>
   </div>
 </div>
+    <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBhnEso3ozk4xG0k9x-69DC0HrKs8flzeU",
+    authDomain: "mytestplaydate-4bc69.firebaseapp.com",
+    projectId: "mytestplaydate-4bc69",
+    storageBucket: "mytestplaydate-4bc69.firebasestorage.app",
+    messagingSenderId: "995628219885",
+    appId: "1:995628219885:web:333b93e79445febd3fbbe4",
+    measurementId: "G-H1XRB359QB"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  // ログインチェック
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      window.location.href = "login.html";
+    } else {
+      // ユーザー情報をグローバルに保存
+      window.currentUser = user;
+    }
+  });
+</script>
   <script src="index.js"></script>
 </body>
 </html>
