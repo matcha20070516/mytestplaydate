@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ログイン | 謎解きタイムアタック</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Noto Sans JP", sans-serif;
+      text-align: center;
+      padding-top: 80px;
+      background-color: #f8f9fa;
+    }
+    h2 {
+      color: #333;
+    }
+    button {
+      display: block;
+      margin: 15px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+    }
+    #googleLogin {
+      background-color: #4285f4;
+      color: white;
+    }
+    #guestPlay {
+      background-color: #aaa;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h2>ログイン または ゲストでプレイ</h2>
+
+  <button id="googleLogin">Googleでログイン</button>
+  <button id="guestPlay">ゲストとしてプレイ</button>
+
+  <p style="margin-top:40px; font-size: 14px; color: #666;">
+    ※ゲストの場合、記録は保存されません。
+  </p>
+
+  <script type="module">
+    // Firebase SDK 読み込み
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+    // 🔥 あなたの Firebase 設定
+    const firebaseConfig = {
+      apiKey: "AIzaSyBhnEso3ozk4xG0k9x-69DC0HrKs8flzeU",
+      authDomain: "mytestplaydate-4bc69.firebaseapp.com",
+      projectId: "mytestplaydate-4bc69",
+      storageBucket: "mytestplaydate-4bc69.firebasestorage.app",
+      messagingSenderId: "995628219885",
+      appId: "1:995628219885:web:333b93e79445febd3fbbe4",
+      measurementId: "G-H1XRB359QB"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    // Googleログイン
+    document.getElementById("googleLogin").addEventListener("click", () => {
+      signInWithPopup(auth, provider)
+        .then(result => {
+          const user = result.user;
+          localStorage.setItem("userName", user.displayName);
+          localStorage.setItem("userId", user.uid);
+          localStorage.setItem("isGuest", "false");
+          window.location.href = "profile.html"; // 初回ログイン後プロフィールへ
+        })
+        .catch(error => {
+          alert("ログイン失敗：" + error.message);
+        });
+    });
+
+    // ゲストプレイ
+    document.getElementById("guestPlay").addEventListener("click", () => {
+      localStorage.setItem("userName", "ゲスト");
+      localStorage.setItem("userId", "guest_" + Date.now());
+      localStorage.setItem("isGuest", "true");
+      // ゲストはindexへ直行
+      window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>
