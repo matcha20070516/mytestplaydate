@@ -1,91 +1,116 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ログイン | 謎解きタイムアタック</title>
-  <style>
-    body {
-      font-family: "Segoe UI", "Noto Sans JP", sans-serif;
-      text-align: center;
-      padding-top: 80px;
-      background-color: #f8f9fa;
-    }
-    h2 {
-      color: #333;
-    }
-    button {
-      display: block;
-      margin: 15px auto;
-      padding: 10px 20px;
-      font-size: 16px;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-    }
-    #googleLogin {
-      background-color: #4285f4;
-      color: white;
-    }
-    #guestPlay {
-      background-color: #aaa;
-      color: white;
-    }
-  </style>
-</head>
-<body>
-  <h2>ログイン または ゲストでプレイ</h2>
+<meta charset="UTF-8">
+<title>MyTestPlaydate Login</title>
+<style>
+  body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #ffffff, #95d5b2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+  }
 
-  <button id="googleLogin">Googleでログイン</button>
-  <button id="guestPlay">ゲストとしてプレイ</button>
+  h1 {
+    color: #1b4332;
+    margin-bottom: 40px;
+    text-align: center;
+  }
 
-  <p style="margin-top:40px; font-size: 14px; color: #666;">
-    ※ゲストの場合、記録は保存されません。
-  </p>
+  .login-button {
+    display: block;
+    width: 220px;
+    padding: 15px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
 
-  <script type="module">
-    // Firebase SDK 読み込み
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+  .login-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  }
 
-    // 🔥 あなたの Firebase 設定
-    const firebaseConfig = {
-      apiKey: "AIzaSyBhnEso3ozk4xG0k9x-69DC0HrKs8flzeU",
-      authDomain: "mytestplaydate-4bc69.firebaseapp.com",
-      projectId: "mytestplaydate-4bc69",
-      storageBucket: "mytestplaydate-4bc69.firebasestorage.app",
-      messagingSenderId: "995628219885",
-      appId: "1:995628219885:web:333b93e79445febd3fbbe4",
-      measurementId: "G-H1XRB359QB"
-    };
+  #guestPlay { background-color: #f4a261; color: white; }
+  #googleLogin { background-color: #4285F4; color: white; }
+  #twitterLogin { background-color: #1DA1F2; color: white; }
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
+  footer {
+    position: absolute;
+    bottom: 10px;
+    font-size: 12px;
+    color: #333;
+  }
+</style>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getAuth, signInWithPopup, GoogleAuthProvider, TwitterAuthProvider } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-    // Googleログイン
+  const firebaseConfig = {
+    apiKey: "AIzaSyBhnEso3ozk4xG0k9x-69DC0HrKs8flzeU",
+    authDomain: "mytestplaydate-4bc69.firebaseapp.com",
+    projectId: "mytestplaydate-4bc69",
+    storageBucket: "mytestplaydate-4bc69.appspot.com",
+    messagingSenderId: "995628219885",
+    appId: "1:995628219885:web:333b93e79445febd3fbbe4"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  const googleProvider = new GoogleAuthProvider();
+  const twitterProvider = new TwitterAuthProvider();
+
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("guestPlay").addEventListener("click", () => {
+      localStorage.setItem("userName", "ゲスト");
+      localStorage.setItem("userId", "guest_" + Date.now());
+      localStorage.setItem("isGuest", "true");
+      window.location.href = "profile.html";
+    });
+
     document.getElementById("googleLogin").addEventListener("click", () => {
-      signInWithPopup(auth, provider)
+      signInWithPopup(auth, googleProvider)
         .then(result => {
           const user = result.user;
           localStorage.setItem("userName", user.displayName);
           localStorage.setItem("userId", user.uid);
           localStorage.setItem("isGuest", "false");
-          window.location.href = "profile.html"; // 初回ログイン後プロフィールへ
+          window.location.href = "profile.html";
         })
-        .catch(error => {
-          alert("ログイン失敗：" + error.message);
-        });
+        .catch(error => alert("Googleログイン失敗：" + error.message));
     });
 
-    // ゲストプレイ
-    document.getElementById("guestPlay").addEventListener("click", () => {
-      localStorage.setItem("userName", "ゲスト");
-      localStorage.setItem("userId", "guest_" + Date.now());
-      localStorage.setItem("isGuest", "true");
-      // ゲストはindexへ直行
-      window.location.href = "index.html";
+    document.getElementById("twitterLogin").addEventListener("click", () => {
+      signInWithPopup(auth, twitterProvider)
+        .then(result => {
+          const user = result.user;
+          localStorage.setItem("userName", user.displayName);
+          localStorage.setItem("userId", user.uid);
+          localStorage.setItem("isGuest", "false");
+          window.location.href = "profile.html";
+        })
+        .catch(error => alert("Twitterログイン失敗：" + error.message));
     });
-  </script>
+  });
+</script>
+</head>
+<body>
+  <h1>MyTestPlaydate</h1>
+  <button id="guestPlay" class="login-button">ゲストでプレイ</button>
+  <button id="googleLogin" class="login-button">Googleでログイン</button>
+  <button id="twitterLogin" class="login-button">Twitterでログイン</button>
+
+  <footer>
+    © 2025 Matcha. All rights reserved.
+  </footer>
 </body>
 </html>
