@@ -9,7 +9,7 @@ const timer = setInterval(() => {
         countdownEl.offsetHeight; // reflow
         countdownEl.style.animation = null;
     } else if (count === 0) {
-        countdownEl.textContent = "スタート！";
+        countdownEl.textContent = "開始！";
     } else {
         clearInterval(timer);
 
