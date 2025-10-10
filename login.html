@@ -50,6 +50,9 @@
     color: #333;
   }
 </style>
+<!-- Firebase SDK（非 module 版） -->
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js"></script>
 </head>
 <body>
   <h1>MyTestPlaydate</h1>
@@ -61,10 +64,8 @@
     © 2025 Matcha. All rights reserved.
   </footer>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, TwitterAuthProvider } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-
+  <script>
+    // Firebase 初期化
     const firebaseConfig = {
       apiKey: "AIzaSyBhnEso3ozk4xG0k9x-69DC0HrKs8flzeU",
       authDomain: "mytestplaydate-4bc69.firebaseapp.com",
@@ -73,39 +74,39 @@
       messagingSenderId: "995628219885",
       appId: "1:995628219885:web:333b93e79445febd3fbbe4"
     };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const googleProvider = new GoogleAuthProvider();
-    const twitterProvider = new TwitterAuthProvider();
+    const googleProvider = new firebase.auth.GoogleAuthProvider();
+    const twitterProvider = new firebase.auth.TwitterAuthProvider();
 
-    // リダイレクト後の結果取得
-    getRedirectResult(auth)
-      .then(result => {
-        if (result && result.user) {
-          const user = result.user;
-          localStorage.setItem("userName", user.displayName);
-          localStorage.setItem("userId", user.uid);
-          localStorage.setItem("isGuest", "false");
-          window.location.href = "profile.html";
-        }
-      })
-      .catch(err => console.error("Redirect error:", err));
+    // リダイレクト後の処理
+    auth.getRedirectResult().then(function(result) {
+      if (result.user) {
+        const user = result.user;
+        localStorage.setItem("userName", user.displayName);
+        localStorage.setItem("userId", user.uid);
+        localStorage.setItem("isGuest", "false");
+        window.location.href = "profile.html";
+      }
+    }).catch(function(error) {
+      console.error("Redirect error:", error);
+    });
 
     // ボタンイベント
-    document.getElementById("guestPlay").addEventListener("click", () => {
+    document.getElementById("guestPlay").addEventListener("click", function() {
       localStorage.setItem("userName", "ゲスト");
       localStorage.setItem("userId", "guest_" + Date.now());
       localStorage.setItem("isGuest", "true");
       window.location.href = "profile.html";
     });
 
-    document.getElementById("googleLogin").addEventListener("click", () => {
-      signInWithRedirect(auth, googleProvider);
+    document.getElementById("googleLogin").addEventListener("click", function() {
+      auth.signInWithRedirect(googleProvider);
     });
 
-    document.getElementById("twitterLogin").addEventListener("click", () => {
-      signInWithRedirect(auth, twitterProvider);
+    document.getElementById("twitterLogin").addEventListener("click", function() {
+      auth.signInWithRedirect(twitterProvider);
     });
   </script>
 </body>
