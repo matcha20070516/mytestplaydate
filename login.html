@@ -52,7 +52,7 @@
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, TwitterAuthProvider } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+  import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, TwitterAuthProvider } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBhnEso3ozk4xG0k9x-69DC0HrKs8flzeU",
@@ -93,15 +93,7 @@
     });
 
     document.getElementById("googleLogin").addEventListener("click", () => {
-      signInWithPopup(auth, googleProvider)
-        .then(result => {
-          const user = result.user;
-          localStorage.setItem("userName", user.displayName);
-          localStorage.setItem("userId", user.uid);
-          localStorage.setItem("isGuest", "false");
-          window.location.href = "profile.html";
-        })
-        .catch(error => alert("Googleログイン失敗：" + error.message));
+      signInWithRedirect(auth, googleProvider);
     });
 
     document.getElementById("twitterLogin").addEventListener("click", () => {
