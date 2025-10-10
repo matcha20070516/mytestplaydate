@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ログイン - TExAM</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+```
+    body {
+        font-family: "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .container {
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        width: 90%;
+        max-width: 400px;
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 30px;
+        font-size: 28px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        color: #555;
+        font-weight: bold;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: border-color 0.3s;
+    }
+
+    input:focus {
+        outline: none;
+        border-color: #667eea;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 10px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+        background: #5da3fa;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: #3c84e6;
+    }
+
+    .divider {
+        text-align: center;
+        margin: 30px 0;
+        color: #999;
+        position: relative;
+    }
+
+    .divider::before,
+    .divider::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        width: 45%;
+        height: 1px;
+        background: #ddd;
+    }
+
+    .divider::before {
+        left: 0;
+    }
+
+    .divider::after {
+        right: 0;
+    }
+
+    .link-text {
+        text-align: center;
+        margin-top: 20px;
+        color: #666;
+    }
+
+    .link-text a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .link-text a:hover {
+        text-decoration: underline;
+    }
+
+    .error-message {
+        background: #fee;
+        color: #c33;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: none;
+    }
+
+    .success-message {
+        background: #efe;
+        color: #3c3;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: none;
+    }
+</style>
+```
+
+</head>
+<body>
+    <div class="container">
+        <h1 id="formTitle">ログイン</h1>
+
+```
+    <div id="errorMessage" class="error-message"></div>
+    <div id="successMessage" class="success-message"></div>
+
+    <form id="authForm">
+        <div class="form-group">
+            <label for="email">メールアドレス</label>
+            <input type="email" id="email" required placeholder="example@mail.com">
+        </div>
+
+        <div class="form-group">
+            <label for="password">パスワード</label>
+            <input type="password" id="password" required placeholder="6文字以上">
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="submitBtn">ログイン</button>
+    </form>
+
+    <div class="divider">または</div>
+
+    <button class="btn btn-secondary" onclick="guestPlay()">ゲストとしてプレイ</button>
+
+    <div class="link-text">
+        <span id="toggleText">アカウントをお持ちでない方は</span>
+        <a id="toggleForm">新規登録</a>
+    </div>
+</div>
+
+<!-- Firebase SDK v9 (モダン版) -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    // Firebase設定
+    const firebaseConfig = {
+        apiKey: "AIzaSyBhnEso3ozk4xG0k9x-69DC0HrKs8flzeU",
+        authDomain: "mytestplaydate-4bc69.firebaseapp.com",
+        projectId: "mytestplaydate-4bc69",
+        storageBucket: "mytestplaydate-4bc69.firebasestorage.app",
+        messagingSenderId: "995628219885",
+        appId: "1:995628219885:web:333b93e79445febd3fbbe4",
+        measurementId: "G-H1XRB359QB"
+    };
+
+    // Firebase初期化
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let isLoginMode = true;
+
+    // フォーム切り替え
+    document.getElementById('toggleForm').addEventListener('click', () => {
+        isLoginMode = !isLoginMode;
+        
+        if (isLoginMode) {
+            document.getElementById('formTitle').textContent = 'ログイン';
+            document.getElementById('submitBtn').textContent = 'ログイン';
+            document.getElementById('toggleText').textContent = 'アカウントをお持ちでない方は';
+            document.getElementById('toggleForm').textContent = '新規登録';
+        } else {
+            document.getElementById('formTitle').textContent = '新規登録';
+            document.getElementById('submitBtn').textContent = '登録';
+            document.getElementById('toggleText').textContent = '既にアカウントをお持ちの方は';
+            document.getElementById('toggleForm').textContent = 'ログイン';
+        }
+        
+        hideMessages();
+    });
+
+    // フォーム送信
+    document.getElementById('authForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        hideMessages();
+
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        try {
+            if (isLoginMode) {
+                // ログイン
+                await signInWithEmailAndPassword(auth, email, password);
+                showSuccess('ログインしました！');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            } else {
+                // 新規登録
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                // Firestoreにユーザーデータを作成
+                await setDoc(doc(db, 'users', user.uid), {
+                    email: email,
+                    createdAt: serverTimestamp(),
+                    totalScore: 0,
+                    gamesPlayed: 0,
+                    testResults: []
+                });
+                
+                showSuccess('登録完了！ログインしています...');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            }
+        } catch (error) {
+            console.error('Auth error:', error);
+            let errorMsg = 'エラーが発生しました';
+            
+            if (error.code === 'auth/email-already-in-use') {
+                errorMsg = 'このメールアドレスは既に使用されています';
+            } else if (error.code === 'auth/weak-password') {
+                errorMsg = 'パスワードは6文字以上にしてください';
+            } else if (error.code === 'auth/invalid-email') {
+                errorMsg = 'メールアドレスの形式が正しくありません';
+            } else if (error.code === 'auth/user-not-found') {
+                errorMsg = 'ユーザーが見つかりません';
+            } else if (error.code === 'auth/wrong-password') {
+                errorMsg = 'パスワードが間違っています';
+            } else if (error.code === 'auth/invalid-credential') {
+                errorMsg = 'メールアドレスまたはパスワードが正しくありません';
+            }
+            
+            showError(errorMsg);
+        }
+    });
+
+    // ゲストプレイ（ログインせずに進む）
+    window.guestPlay = function() {
+        window.location.href = 'index.html';
+    };
+
+    function showError(message) {
+        const errorDiv = document.getElementById('errorMessage');
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+    }
+
+    function showSuccess(message) {
+        const successDiv = document.getElementById('successMessage');
+        successDiv.textContent = message;
+        successDiv.style.display = 'block';
+    }
+
+    function hideMessages() {
+        document.getElementById('errorMessage').style.display = 'none';
+        document.getElementById('successMessage').style.display = 'none';
+    }
+</script>
+```
+
+</body>
+</html>
