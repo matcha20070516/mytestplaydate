@@ -52,20 +52,7 @@
   const googleProvider = new firebase.auth.GoogleAuthProvider();
   const twitterProvider = new firebase.auth.TwitterAuthProvider();
 
-  // リダイレクト後の結果取得
-  auth.getRedirectResult().then(function(result){
-    if(result.user){
-      const user = result.user;
-      localStorage.setItem("userName", user.displayName);
-      localStorage.setItem("userId", user.uid);
-      localStorage.setItem("isGuest", "false");
-      window.location.href = "profile.html";
-    }
-  }).catch(function(error){
-    console.error("Redirect error:", error);
-  });
-
-  // ボタンイベント
+  // ゲストログイン
   document.getElementById("guestPlay").addEventListener("click", function(){
     localStorage.setItem("userName", "ゲスト");
     localStorage.setItem("userId", "guest_" + Date.now());
@@ -73,12 +60,30 @@
     window.location.href = "profile.html";
   });
 
+  // Googleログイン
   document.getElementById("googleLogin").addEventListener("click", function(){
-    auth.signInWithRedirect(googleProvider);
+    auth.signInWithPopup(googleProvider)
+      .then(result => {
+        const user = result.user;
+        localStorage.setItem("userName", user.displayName);
+        localStorage.setItem("userId", user.uid);
+        localStorage.setItem("isGuest", "false");
+        window.location.href = "profile.html";
+      })
+      .catch(error => alert("Googleログイン失敗：" + error.message));
   });
 
+  // Twitterログイン
   document.getElementById("twitterLogin").addEventListener("click", function(){
-    auth.signInWithRedirect(twitterProvider);
+    auth.signInWithPopup(twitterProvider)
+      .then(result => {
+        const user = result.user;
+        localStorage.setItem("userName", user.displayName);
+        localStorage.setItem("userId", user.uid);
+        localStorage.setItem("isGuest", "false");
+        window.location.href = "profile.html";
+      })
+      .catch(error => alert("Twitterログイン失敗：" + error.message));
   });
 </script>
 </body>
