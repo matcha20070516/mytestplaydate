@@ -52,7 +52,7 @@
 </style>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getAuth, signInWithPopup, GoogleAuthProvider, TwitterAuthProvider } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+  import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, TwitterAuthProvider } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyBhnEso3ozk4xG0k9x-69DC0HrKs8flzeU",
@@ -69,7 +69,22 @@
   const googleProvider = new GoogleAuthProvider();
   const twitterProvider = new TwitterAuthProvider();
 
-  document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("DOMContentLoaded", async () => {
+    // リダイレクト後のユーザー情報取得
+    try {
+      const result = await getRedirectResult(auth);
+      if (result) {
+        const user = result.user;
+        localStorage.setItem("userName", user.displayName);
+        localStorage.setItem("userId", user.uid);
+        localStorage.setItem("isGuest", "false");
+        window.location.href = "profile.html";
+      }
+    } catch (error) {
+      console.error("Redirect result error:", error);
+    }
+
+    // ボタンイベント
     document.getElementById("guestPlay").addEventListener("click", () => {
       localStorage.setItem("userName", "ゲスト");
       localStorage.setItem("userId", "guest_" + Date.now());
@@ -90,15 +105,7 @@
     });
 
     document.getElementById("twitterLogin").addEventListener("click", () => {
-      signInWithPopup(auth, twitterProvider)
-        .then(result => {
-          const user = result.user;
-          localStorage.setItem("userName", user.displayName);
-          localStorage.setItem("userId", user.uid);
-          localStorage.setItem("isGuest", "false");
-          window.location.href = "profile.html";
-        })
-        .catch(error => alert("Twitterログイン失敗：" + error.message));
+      signInWithRedirect(auth, twitterProvider);
     });
   });
 </script>
