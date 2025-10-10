@@ -217,12 +217,8 @@
 
   // ログインチェック
   onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      window.location.href = "login.html";
-    } else {
       // ユーザー情報をグローバルに保存
       window.currentUser = user;
-    }
   });
 </script>
   <script src="index.js"></script>
