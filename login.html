@@ -14,100 +14,72 @@
     height: 100vh;
     margin: 0;
   }
-
-  h1 {
-    color: #1b4332;
-    margin-bottom: 40px;
-    text-align: center;
-  }
-
-  .login-button {
-    display: block;
-    width: 220px;
-    padding: 15px;
-    margin: 10px 0;
-    border: none;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: transform 0.1s, box-shadow 0.1s;
-  }
-
-  .login-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-  }
-
-  #guestPlay { background-color: #f4a261; color: white; }
-  #googleLogin { background-color: #4285F4; color: white; }
-  #twitterLogin { background-color: #1DA1F2; color: white; }
-
-  footer {
-    position: absolute;
-    bottom: 10px;
-    font-size: 12px;
-    color: #333;
-  }
+  h1 { color: #1b4332; margin-bottom:40px; text-align:center; }
+  .login-button { display:block; width:220px; padding:15px; margin:10px 0; border:none; border-radius:12px; font-size:16px; font-weight:bold; cursor:pointer; transition: transform 0.1s, box-shadow 0.1s; }
+  .login-button:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+  #guestPlay { background-color:#f4a261; color:white; }
+  #googleLogin { background-color:#4285F4; color:white; }
+  #twitterLogin { background-color:#1DA1F2; color:white; }
+  footer { position:absolute; bottom:10px; font-size:12px; color:#333; }
 </style>
-<!-- Firebase SDK（非 module 版） -->
+
+<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js"></script>
+
 </head>
 <body>
-  <h1>MyTestPlaydate</h1>
-  <button id="guestPlay" class="login-button">ゲストでプレイ</button>
-  <button id="googleLogin" class="login-button">Googleでログイン</button>
-  <button id="twitterLogin" class="login-button">Twitterでログイン</button>
+<h1>MyTestPlaydate</h1>
+<button id="guestPlay" class="login-button">ゲストでプレイ</button>
+<button id="googleLogin" class="login-button">Googleでログイン</button>
+<button id="twitterLogin" class="login-button">Twitterでログイン</button>
 
-  <footer>
-    © 2025 Matcha. All rights reserved.
-  </footer>
+<footer>© 2025 Matcha. All rights reserved.</footer>
 
-  <script>
-    // Firebase 初期化
-    const firebaseConfig = {
-      apiKey: "AIzaSyBhnEso3ozk4xG0k9x-69DC0HrKs8flzeU",
-      authDomain: "mytestplaydate-4bc69.firebaseapp.com",
-      projectId: "mytestplaydate-4bc69",
-      storageBucket: "mytestplaydate-4bc69.appspot.com",
-      messagingSenderId: "995628219885",
-      appId: "1:995628219885:web:333b93e79445febd3fbbe4"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
+<script>
+  // Firebase 初期化
+  const firebaseConfig = {
+    apiKey: "AIzaSyBhnEso3ozk4xG0k9x-69DC0HrKs8flzeU",
+    authDomain: "mytestplaydate-4bc69.firebaseapp.com",
+    projectId: "mytestplaydate-4bc69",
+    storageBucket: "mytestplaydate-4bc69.appspot.com",
+    messagingSenderId: "995628219885",
+    appId: "1:995628219885:web:333b93e79445febd3fbbe4"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
 
-    const googleProvider = new firebase.auth.GoogleAuthProvider();
-    const twitterProvider = new firebase.auth.TwitterAuthProvider();
+  const googleProvider = new firebase.auth.GoogleAuthProvider();
+  const twitterProvider = new firebase.auth.TwitterAuthProvider();
 
-    // リダイレクト後の処理
-    auth.getRedirectResult().then(function(result) {
-      if (result.user) {
-        const user = result.user;
-        localStorage.setItem("userName", user.displayName);
-        localStorage.setItem("userId", user.uid);
-        localStorage.setItem("isGuest", "false");
-        window.location.href = "profile.html";
-      }
-    }).catch(function(error) {
-      console.error("Redirect error:", error);
-    });
-
-    // ボタンイベント
-    document.getElementById("guestPlay").addEventListener("click", function() {
-      localStorage.setItem("userName", "ゲスト");
-      localStorage.setItem("userId", "guest_" + Date.now());
-      localStorage.setItem("isGuest", "true");
+  // リダイレクト後の結果取得
+  auth.getRedirectResult().then(function(result){
+    if(result.user){
+      const user = result.user;
+      localStorage.setItem("userName", user.displayName);
+      localStorage.setItem("userId", user.uid);
+      localStorage.setItem("isGuest", "false");
       window.location.href = "profile.html";
-    });
+    }
+  }).catch(function(error){
+    console.error("Redirect error:", error);
+  });
 
-    document.getElementById("googleLogin").addEventListener("click", function() {
-      auth.signInWithRedirect(googleProvider);
-    });
+  // ボタンイベント
+  document.getElementById("guestPlay").addEventListener("click", function(){
+    localStorage.setItem("userName", "ゲスト");
+    localStorage.setItem("userId", "guest_" + Date.now());
+    localStorage.setItem("isGuest", "true");
+    window.location.href = "profile.html";
+  });
 
-    document.getElementById("twitterLogin").addEventListener("click", function() {
-      auth.signInWithRedirect(twitterProvider);
-    });
-  </script>
+  document.getElementById("googleLogin").addEventListener("click", function(){
+    auth.signInWithRedirect(googleProvider);
+  });
+
+  document.getElementById("twitterLogin").addEventListener("click", function(){
+    auth.signInWithRedirect(twitterProvider);
+  });
+</script>
 </body>
 </html>
