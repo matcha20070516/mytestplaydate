@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
@@ -17,242 +16,177 @@
       align-items: center;
     }
 
-```
-.container {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  padding: 40px;
-  width: 90%;
-  max-width: 400px;
-  text-align: center;
-  position: relative;
-}
+    .container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      position: relative;
+    }
 
-/* ユーザー情報表示 */
-.user-info {
-  position: absolute;
-  top: 16px;
-  left: 16px;
-  background: #5da3fa;
-  color: white;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 0.9em;
-  display: none;
-}
+    h1 {
+      color: #333;
+      margin-bottom: 24px;
+      font-size: 1.8em;
+    }
 
-.user-info.show {
-  display: block;
-}
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 1em;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
 
-.logout-btn {
-  position: absolute;
-  top: 16px;
-  left: 16px;
-  background: #ff6b6b;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 0.9em;
-  cursor: pointer;
-  display: none;
-}
+    select {
+      width: 100%;
+      padding: 10px;
+      font-size: 1em;
+      border-radius: 8px;
+      margin-bottom: 24px;
+    }
 
-.logout-btn.show {
-  display: block;
-}
+    button {
+      background-color: #5da3fa;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1em;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+    }
 
-.logout-btn:hover {
-  background: #ee5555;
-}
-
-h1 {
-  color: #333;
-  margin-bottom: 24px;
-  font-size: 1.8em;
-}
-
-input[type="text"] {
-  width: 100%;
-  padding: 12px;
-  font-size: 1em;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  margin-bottom: 16px;
-}
-
-select {
-  width: 100%;
-  padding: 10px;
-  font-size: 1em;
-  border-radius: 8px;
-  margin-bottom: 24px;
-}
-
-button {
-  background-color: #5da3fa;
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  font-size: 1em;
-  border-radius: 8px;
-  cursor: pointer;
-  width: 100%;
-}
 
 .modal-content {
-  background: #fff;
-  border: 3px solid #5da3fa;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-  max-width: 400px;
-  width: 90vw;
-  max-height: 80vh;
-  overflow-y: auto;
-  padding: 24px 14px;
-  text-align: center;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
+    background: #fff;
+    border: 3px solid #5da3fa;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    max-width: 400px;
+    width: 90vw;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 24px 14px;
+    text-align: center;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
-.close-btn {
-  position: absolute;
-  top: 12px;
-  right: 16px;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  background: none;
-  border: none;
-  font-size: 1.5em;
-  color: #888;
-  cursor: pointer;
-  z-index: 20;
-  padding: 0;
-}
-.close-btn:hover { color: #333; }
+  .close-btn {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    wigth: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    color: #888;
+    cursor: pointer;
+    z-index: 20;
+    padding: 0;
+  }
+  .close-btn:hover { color: #333; }
+    
+    button:hover {
+      background-color: #3c84e6;
+    }
 
-button:hover {
-  background-color: #3c84e6;
-}
-
-.help-btn {
-  position: absolute;
-  top: 16px; right: 16px; z-index: 2;
-  width: 32px; height: 32px;
-  border-radius: 50%; background: #5da3fa; color: #fff;
-  border: none; font-size: 1.2em; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  padding: 0;
-  box-sizing: border-box;
-}
-.help-btn:hover { background: #3c84e6; }
-
-.modal {
-  display: none; position: fixed; z-index: 10; left: 0; top: 0;
-  width: 100vw; height: 100vh; background: rgba(0,0,0,0.3);
-  justify-content: center; align-items: center;
-}
-.modal.show { display: flex; }
-
-.howto-img {
+    .help-btn {
+    position: absolute;
+    top: 16px; right: 16px; z-index: 2;
+    width: 32px; height: 32px;
+    border-radius: 50%; background: #5da3fa; color: #fff;
+    border: none; font-size: 1.2em; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0;
+    box-sizing: border-box;
+  }
+    .help-btn:hover { background: #3c84e6; }
+    .modal {
+      display: none; position: fixed; z-index: 10; left: 0; top: 0;
+      width: 100vw; height: 100vh; background: rgba(0,0,0,0.3);
+      justify-content: center; align-items: center;
+    }
+    .modal.show { display: flex; }
+    .close-btn {
+      position: absolute; top: 8px; right: 12px;
+      background: none; border: none; font-size: 1.3em;
+      color: #888; cursor: pointer;
+    }
+    .howto-img {
   width: 85%;
   max-width: 600px;
   aspect-ratio: 1 / 1;
   border: 2px solid #333;
   background: #fff;
   border-radius: 8px;
-  object-fit: contain;
+  object-fit: contain; /* 画像を潰さずに枠内に収める */
   display: block;
   margin: 0 auto;
   box-sizing: border-box;
 }
+    .slide-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0;
+    box-sizing: border-box;
+    margin-bottom: 12px;
+  }
 
-.slide-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 0;
-  box-sizing: border-box;
-  margin-bottom: 12px;
-}
+  .slide-btn {
+    background: #5da3fa;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    width: 38px;
+    height: 38px;
+    font-size: 1.4em;
+    cursor: pointer;
+    margin: 0 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-.slide-btn {
-  background: #5da3fa;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  width: 38px;
-  height: 38px;
-  font-size: 1.4em;
-  cursor: pointer;
-  margin: 0 2px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+  .slide-btn:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+  }
 
-.slide-btn:disabled {
-  background: #cccccc;
-  cursor: not-allowed;
-}
-
-.slide-btn:hover:not(:disabled) {
-  background: #3c84e6;
-}
-
-.indicator { display: flex; gap: 6px; margin: 8px 0; }
-.dot { width: 10px; height: 10px; border-radius: 50%; background: #d3d3d3; }
-.dot.active { background: #5da3fa; }
-.slide-desc { margin-bottom: 10px; min-height: 40px; text-align: left; }
-
-.login-link {
-  margin-top: 16px;
-  font-size: 0.9em;
-  color: #666;
-}
-
-.login-link a {
-  color: #5da3fa;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.login-link a:hover {
-  text-decoration: underline;
-}
-```
-
+  .slide-btn:hover:not(:disabled) {
+    background: #3c84e6;
+  }
+    .indicator { display: flex; gap: 6px; margin: 8px 0; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: #d3d3d3; }
+    .dot.active { background: #5da3fa; }
+    .slide-desc { margin-bottom: 10px; min-height: 40px; text-align: left; }
   </style>
 </head>
 <body>
   <div class="container">
-    <button id="logoutBtn" class="logout-btn" onclick="logout()">ログアウト</button>
-
-```
-<h1>TExAM</h1>
-
-<input type="text" id="name" placeholder="名前を入力"><br>
-<select id="set">
-  <option value="謎検模試_M">謎検模試_M</option>
-  <option value="謎検模試test">謎検模試test</option>
-</select><br>
-
-<button onclick="start()">決定</button>
-
-<div class="login-link" id="loginLink">
-  <a href="login.html">ログインする</a>
-</div>
-
-<button class="help-btn" onclick="openHelp()">？</button>
-
-<div id="modalHelp" class="modal">
+    <h1>TExAM</h1>
+    <input type="text" id="name" placeholder="名前を入力"><br>
+    <select id="set">
+      <option value="謎検模試_M">謎検模試_M</option>
+      <option value="謎検模試test">謎検模試test</option>
+      <!-- 他のセットもここに追加できます -->
+    </select><br>
+    <button onclick="start()">決定</button>
+</button>
+    <button class="help-btn" onclick="openHelp()">？</button>
+    <div id="modalHelp" class="modal">
   <div class="modal-content">
     <h2 style="margin-top:0;">使い方</h2>
     <div class="slide-nav">
@@ -264,103 +198,33 @@ button:hover {
     <div class="slide-desc" id="slideDesc"></div>
   </div>
 </div>
-```
+    <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
 
-  </div>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBhnEso3ozk4xG0k9x-69DC0HrKs8flzeU",
+    authDomain: "mytestplaydate-4bc69.firebaseapp.com",
+    projectId: "mytestplaydate-4bc69",
+    storageBucket: "mytestplaydate-4bc69.firebasestorage.app",
+    messagingSenderId: "995628219885",
+    appId: "1:995628219885:web:333b93e79445febd3fbbe4",
+    measurementId: "G-H1XRB359QB"
+  };
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, updateDoc, arrayUnion, increment } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBhnEso3ozk4xG0k9x-69DC0HrKs8flzeU",
-      authDomain: "mytestplaydate-4bc69.firebaseapp.com",
-      projectId: "mytestplaydate-4bc69",
-      storageBucket: "mytestplaydate-4bc69.firebasestorage.app",
-      messagingSenderId: "995628219885",
-      appId: "1:995628219885:web:333b93e79445febd3fbbe4",
-      measurementId: "G-H1XRB359QB"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    // グローバル変数
-    window.currentUser = null;
-    window.db = db;
-
-    // ログイン状態チェック（ログインしていなくてもOK）
-    onAuthStateChanged(auth, async (user) => {
-      const logoutBtn = document.getElementById('logoutBtn');
-      const loginLink = document.getElementById('loginLink');
-      
-      if (user) {
-        // ログイン中
-        window.currentUser = user;
-        logoutBtn.classList.add('show');
-        loginLink.style.display = 'none';
-        
-        // ユーザーデータを取得
-        try {
-          const userDoc = await getDoc(doc(db, 'users', user.uid));
-          if (userDoc.exists()) {
-            const userData = userDoc.data();
-            console.log('ユーザーデータ:', userData);
-          }
-        } catch (error) {
-          console.error('ユーザーデータ取得エラー:', error);
-        }
-      } else {
-        // ゲストモード
-        window.currentUser = null;
-        logoutBtn.classList.remove('show');
-        loginLink.style.display = 'block';
-      }
-    });
-
-    // ログアウト機能
-    window.logout = async function() {
-      try {
-        await signOut(auth);
-        alert('ログアウトしました');
-        window.location.reload();
-      } catch (error) {
-        console.error('ログアウトエラー:', error);
-        alert('ログアウトに失敗しました');
-      }
-    };
-
-    // テスト結果を保存する関数（グローバルに公開）
-    window.saveTestResult = async function(testData) {
-      if (!window.currentUser) {
-        console.log('ゲストモード：データは保存されません');
-        return;
-      }
-
-      try {
-        const userRef = doc(db, 'users', window.currentUser.uid);
-        
-        await updateDoc(userRef, {
-          testResults: arrayUnion({
-            testName: testData.testName,
-            score: testData.score,
-            userName: testData.userName,
-            timestamp: new Date().toISOString()
-          }),
-          gamesPlayed: increment(1),
-          totalScore: increment(testData.score)
-        });
-        
-        console.log('テスト結果を保存しました:', testData);
-      } catch (error) {
-        console.error('テスト結果保存エラー:', error);
-      }
-    };
-  </script>
-
+  // ログインチェック
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      window.location.href = "login.html";
+    } else {
+      // ユーザー情報をグローバルに保存
+      window.currentUser = user;
+    }
+  });
+</script>
   <script src="index.js"></script>
-
 </body>
 </html>
