@@ -11,28 +11,28 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 100vh; /* height を min-height に変更 */
+      min-height: 100vh; /* スクロール対応 */
       margin: 0;
       padding: 20px; /* 全体の余白を追加 */
-      box-sizing: border-box; /* paddingを含めて高さ計算 */
+      box-sizing: border-box;
     }
 
     h1 {
       color: #1b4332;
-      margin-bottom: 50px; /* 余白を大きく */
+      margin-bottom: 40px;
       text-align: center;
-      font-size: 28px; /* 文字サイズを大きく */
+      font-size: 2em; /* スマホでも見やすい大きさに調整 */
     }
 
     .login-button {
       display: block;
-      width: 90%; /* スマホ画面に合わせて幅を90%に */
-      max-width: 300px; /* PCなど大きい画面でも広がりすぎないように制限 */
-      padding: 18px; /* パディングを大きくしてタップしやすく */
-      margin: 12px 0; /* マージンも広げる */
+      width: 90%; /* 画面幅に合わせて大きく */
+      max-width: 280px; /* 最大幅を制限 */
+      padding: 18px; /* タップしやすくするためパディングを増加 */
+      margin: 12px 0; /* ボタン間の間隔を広く */
       border: none;
       border-radius: 12px;
-      font-size: 18px; /* 文字サイズを大きく */
+      font-size: 1.1em; /* 文字を少し大きく */
       font-weight: bold;
       cursor: pointer;
       transition: transform 0.1s, box-shadow 0.1s;
@@ -50,7 +50,7 @@
     footer {
       position: absolute;
       bottom: 10px;
-      font-size: 14px; /* フッターの文字も少し大きく */
+      font-size: 0.9em; /* 元のデザインに合わせ、極端に変えない */
       color: #333;
     }
 </style>
