@@ -10,7 +10,7 @@
   <style>
     body {
       font-family: "Noto Sans JP", sans-serif;
-      background: #fff;
+      background: linear-gradient(135deg, #b2dfdb, #80cbc4);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -19,24 +19,28 @@
     }
 
     .container {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
       width: 90%;
-      max-width: 360px;
+      max-width: 380px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
       text-align: center;
     }
 
     h1 {
-      font-size: 1.6rem;
-      margin-bottom: 24px;
-      color: #333;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
     }
 
     button {
       width: 100%;
       padding: 12px;
-      margin: 10px 0;
+      margin: 8px 0;
       border: none;
       border-radius: 8px;
       font-size: 1rem;
+      font-weight: bold;
       cursor: pointer;
       transition: 0.2s;
     }
@@ -60,14 +64,8 @@
     }
     .guest:hover { background: #7cb342; }
 
-    footer {
-      font-size: 0.8rem;
-      color: #888;
-      margin-top: 40px;
-    }
-
     @media (max-width: 480px) {
-      h1 { font-size: 1.4rem; }
+      h1 { font-size: 1.3rem; }
       button { font-size: 0.9rem; padding: 10px; }
     }
   </style>
@@ -78,14 +76,9 @@
     <button class="google" id="googleLogin">Googleでログイン</button>
     <button class="twitter" id="twitterLogin">Twitterでログイン</button>
     <button class="guest" id="guestLogin">ゲストで始める</button>
-    <footer>MyTestPlayDate</footer>
   </div>
 
   <script>
-    // === ここだけ変えれば飛ぶ先変えられます ===
-    const redirectAfterLogin = "index.html"; // 例: "profile.html" にも可
-    // ========================================
-
     const firebaseConfig = {
       apiKey: "AIzaSyBhnEso3ozk4xG0k9x-69DC0HrKs8flzeU",
       authDomain: "mytestplaydate-4bc69.firebaseapp.com",
@@ -99,16 +92,14 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
 
-    const goNext = (user) => {
-      console.log("ログイン成功:", user);
-      window.location.href = redirectAfterLogin;
-    };
-
     // Googleログイン
     document.getElementById("googleLogin").onclick = () => {
       const provider = new firebase.auth.GoogleAuthProvider();
       auth.signInWithPopup(provider)
-        .then(result => goNext(result.user))
+        .then(result => {
+          alert(`ようこそ ${result.user.displayName} さん！`);
+          window.location.href = "index.html";
+        })
         .catch(error => alert(error.message));
     };
 
@@ -116,14 +107,17 @@
     document.getElementById("twitterLogin").onclick = () => {
       const provider = new firebase.auth.TwitterAuthProvider();
       auth.signInWithPopup(provider)
-        .then(result => goNext(result.user))
+        .then(result => {
+          alert(`ようこそ ${result.user.displayName} さん！`);
+          window.location.href = "index.html";
+        })
         .catch(error => alert(error.message));
     };
 
     // ゲストログイン
     document.getElementById("guestLogin").onclick = () => {
       auth.signInAnonymously()
-        .then(result => goNext(result.user))
+        .then(() => window.location.href = "index.html")
         .catch(error => alert(error.message));
     };
   </script>
