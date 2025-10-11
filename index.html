@@ -27,6 +27,19 @@
       position: relative;
     }
 
+    <!-- container の中のボタンの下あたりに追加 -->
+<button id="loginRedirectBtn" style="
+  display:none;
+  margin-top:12px;
+  background:#1b4332;
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  padding:10px 20px;
+  font-size:1em;
+  cursor:pointer;
+">ログインページへ</button>
+    
     h1 {
       color: #333;
       margin-bottom: 24px;
@@ -214,6 +227,25 @@
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
+
+  // ログインチェック後の動作
+const loginRedirectBtn = document.getElementById("loginRedirectBtn");
+
+onAuthStateChanged(auth, (user) => {
+  window.currentUser = user;
+
+  if (!user) {
+    // 未ログイン時のみ表示
+    loginRedirectBtn.style.display = "block";
+  } else {
+    loginRedirectBtn.style.display = "none";
+  }
+});
+
+// ログインページへ遷移
+loginRedirectBtn.addEventListener("click", () => {
+  window.location.href = "login.html";
+});
 
   // ログインチェック
   onAuthStateChanged(auth, (user) => {
