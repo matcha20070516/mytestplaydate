@@ -4,51 +4,55 @@
 <meta charset="UTF-8">
 <title>MyTestPlaydate Login</title>
 <style>
-  body {
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #ffffff, #95d5b2);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    margin: 0;
-  }
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #ffffff, #95d5b2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh; /* height を min-height に変更 */
+      margin: 0;
+      padding: 20px; /* 全体の余白を追加 */
+      box-sizing: border-box; /* paddingを含めて高さ計算 */
+    }
 
-  h1 {
-    color: #1b4332;
-    margin-bottom: 40px;
-    text-align: center;
-  }
+    h1 {
+      color: #1b4332;
+      margin-bottom: 50px; /* 余白を大きく */
+      text-align: center;
+      font-size: 28px; /* 文字サイズを大きく */
+    }
 
-  .login-button {
-    display: block;
-    width: 220px;
-    padding: 15px;
-    margin: 10px 0;
-    border: none;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: transform 0.1s, box-shadow 0.1s;
-  }
+    .login-button {
+      display: block;
+      width: 90%; /* スマホ画面に合わせて幅を90%に */
+      max-width: 300px; /* PCなど大きい画面でも広がりすぎないように制限 */
+      padding: 18px; /* パディングを大きくしてタップしやすく */
+      margin: 12px 0; /* マージンも広げる */
+      border: none;
+      border-radius: 12px;
+      font-size: 18px; /* 文字サイズを大きく */
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
 
-  .login-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-  }
+    .login-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
 
-  #guestPlay { background-color: #f4a261; color: white; }
-  #googleLogin { background-color: #4285F4; color: white; }
-  #twitterLogin { background-color: #1DA1F2; color: white; }
+    #guestPlay { background-color: #f4a261; color: white; }
+    #googleLogin { background-color: #4285F4; color: white; }
+    #twitterLogin { background-color: #1DA1F2; color: white; }
 
-  footer {
-    position: absolute;
-    bottom: 10px;
-    font-size: 12px;
-    color: #333;
-  }
+    footer {
+      position: absolute;
+      bottom: 10px;
+      font-size: 14px; /* フッターの文字も少し大きく */
+      color: #333;
+    }
 </style>
 </head>
 <body>
