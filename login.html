@@ -1,112 +1,131 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<title>MyTestPlaydate Login</title>
-<style>
-  body {
-    font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #ffffff, #95d5b2);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    margin: 0;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ログイン | MyTestPlayDate</title>
+  <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js"></script>
 
-  h1 {
-    color: #1b4332;
-    margin-bottom: 40px;
-    text-align: center;
-  }
+  <style>
+    body {
+      font-family: "Noto Sans JP", sans-serif;
+      background: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
 
-  .login-button {
-    display: block;
-    width: 220px;
-    padding: 15px;
-    margin: 10px 0;
-    border: none;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: transform 0.1s, box-shadow 0.1s;
-  }
+    .container {
+      width: 90%;
+      max-width: 360px;
+      text-align: center;
+    }
 
-  .login-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-  }
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 24px;
+      color: #333;
+    }
 
-  #guestPlay { background-color: #f4a261; color: white; }
-  #googleLogin { background-color: #4285F4; color: white; }
-  #twitterLogin { background-color: #1DA1F2; color: white; }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
 
-  footer {
-    position: absolute;
-    bottom: 10px;
-    font-size: 12px;
-    color: #333;
-  }
-</style>
+    .google {
+      background: #fff;
+      border: 2px solid #4285f4;
+      color: #4285f4;
+    }
+    .google:hover { background: #e8f0fe; }
+
+    .twitter {
+      background: #1da1f2;
+      color: white;
+    }
+    .twitter:hover { background: #0d8ddb; }
+
+    .guest {
+      background: #9ccc65;
+      color: white;
+    }
+    .guest:hover { background: #7cb342; }
+
+    footer {
+      font-size: 0.8rem;
+      color: #888;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 480px) {
+      h1 { font-size: 1.4rem; }
+      button { font-size: 0.9rem; padding: 10px; }
+    }
+  </style>
 </head>
 <body>
-  <h1>MyTestPlaydate</h1>
-  <button id="guestPlay" class="login-button">ゲストでプレイ</button>
-  <button id="googleLogin" class="login-button">Googleでログイン</button>
-  <button id="twitterLogin" class="login-button">Twitterでログイン</button>
+  <div class="container">
+    <h1>ログイン</h1>
+    <button class="google" id="googleLogin">Googleでログイン</button>
+    <button class="twitter" id="twitterLogin">Twitterでログイン</button>
+    <button class="guest" id="guestLogin">ゲストで始める</button>
+    <footer>MyTestPlayDate</footer>
+  </div>
 
-  <footer>
-    © 2025 Matcha. All rights reserved.
-  </footer>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, TwitterAuthProvider } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+  <script>
+    // === ここだけ変えれば飛ぶ先変えられます ===
+    const redirectAfterLogin = "index.html"; // 例: "profile.html" にも可
+    // ========================================
 
     const firebaseConfig = {
       apiKey: "AIzaSyBhnEso3ozk4xG0k9x-69DC0HrKs8flzeU",
       authDomain: "mytestplaydate-4bc69.firebaseapp.com",
       projectId: "mytestplaydate-4bc69",
-      storageBucket: "mytestplaydate-4bc69.appspot.com",
+      storageBucket: "mytestplaydate-4bc69.firebasestorage.app",
       messagingSenderId: "995628219885",
-      appId: "1:995628219885:web:333b93e79445febd3fbbe4"
+      appId: "1:995628219885:web:333b93e79445febd3fbbe4",
+      measurementId: "G-H1XRB359QB"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const googleProvider = new GoogleAuthProvider();
-    const twitterProvider = new TwitterAuthProvider();
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
 
-    // リダイレクト後の結果取得
-    getRedirectResult(auth)
-      .then(result => {
-        if (result && result.user) {
-          const user = result.user;
-          localStorage.setItem("userName", user.displayName);
-          localStorage.setItem("userId", user.uid);
-          localStorage.setItem("isGuest", "false");
-          window.location.href = "profile.html";
-        }
-      })
-      .catch(err => console.error("Redirect error:", err));
+    const goNext = (user) => {
+      console.log("ログイン成功:", user);
+      window.location.href = redirectAfterLogin;
+    };
 
-    // ボタンイベント
-    document.getElementById("guestPlay").addEventListener("click", () => {
-      localStorage.setItem("userName", "ゲスト");
-      localStorage.setItem("userId", "guest_" + Date.now());
-      localStorage.setItem("isGuest", "true");
-      window.location.href = "profile.html";
-    });
+    // Googleログイン
+    document.getElementById("googleLogin").onclick = () => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .then(result => goNext(result.user))
+        .catch(error => alert(error.message));
+    };
 
-    document.getElementById("googleLogin").addEventListener("click", () => {
-      signInWithRedirect(auth, googleProvider);
-    });
+    // Twitterログイン
+    document.getElementById("twitterLogin").onclick = () => {
+      const provider = new firebase.auth.TwitterAuthProvider();
+      auth.signInWithPopup(provider)
+        .then(result => goNext(result.user))
+        .catch(error => alert(error.message));
+    };
 
-    document.getElementById("twitterLogin").addEventListener("click", () => {
-      signInWithRedirect(auth, twitterProvider);
-    });
+    // ゲストログイン
+    document.getElementById("guestLogin").onclick = () => {
+      auth.signInAnonymously()
+        .then(result => goNext(result.user))
+        .catch(error => alert(error.message));
+    };
   </script>
 </body>
 </html>
