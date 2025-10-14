@@ -234,7 +234,7 @@
   
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-    import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, TwitterAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, TwitterAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
     
     const firebaseConfig = {
       apiKey: "AIzaSyBhnEso3ozk4xG0k9x-69DC0HrKs8flzeU",
@@ -347,18 +347,54 @@
       window.location.href = "index.html";
     });
     
-    document.getElementById("googleLogin").addEventListener("click", () => {
+    document.getElementById("googleLogin").addEventListener("click", async () => {
       addLog("🔵 Googleログインボタンクリック", "info");
-      showStatus("Googleにリダイレクト中...", "info");
+      showStatus("Googleでログイン中...", "info");
       disableButtons(true);
-      signInWithRedirect(auth, googleProvider);
+      
+      try {
+        addLog("Popup方式でログイン試行", "info");
+        const result = await signInWithPopup(auth, googleProvider);
+        addLog(`✅ Popup認証成功: ${result.user.displayName}`, "success");
+        // onAuthStateChangedが自動的に呼ばれる
+      } catch (error) {
+        addLog(`❌ Popupエラー: ${error.code}`, "error");
+        addLog(`詳細: ${error.message}`, "error");
+        
+        // Popupがブロックされた場合はRedirect方式に切り替え
+        if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user') {
+          addLog("Redirect方式に切り替え", "info");
+          signInWithRedirect(auth, googleProvider);
+        } else {
+          showStatus(`エラー: ${error.message}`, "error");
+          disableButtons(false);
+        }
+      }
     });
     
-    document.getElementById("twitterLogin").addEventListener("click", () => {
+    document.getElementById("twitterLogin").addEventListener("click", async () => {
       addLog("🐦 X(Twitter)ログインボタンクリック", "info");
-      showStatus("Xにリダイレクト中...", "info");
+      showStatus("Xでログイン中...", "info");
       disableButtons(true);
-      signInWithRedirect(auth, twitterProvider);
+      
+      try {
+        addLog("Popup方式でログイン試行", "info");
+        const result = await signInWithPopup(auth, twitterProvider);
+        addLog(`✅ Popup認証成功: ${result.user.displayName}`, "success");
+        // onAuthStateChangedが自動的に呼ばれる
+      } catch (error) {
+        addLog(`❌ Popupエラー: ${error.code}`, "error");
+        addLog(`詳細: ${error.message}`, "error");
+        
+        // Popupがブロックされた場合はRedirect方式に切り替え
+        if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user') {
+          addLog("Redirect方式に切り替え", "info");
+          signInWithRedirect(auth, twitterProvider);
+        } else {
+          showStatus(`エラー: ${error.message}`, "error");
+          disableButtons(false);
+        }
+      }
     });
   </script>
 </body>
