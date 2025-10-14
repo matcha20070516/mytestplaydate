@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -63,13 +62,19 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
     
+    .login-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
     #guestPlay {
       background-color: #f5f5f5;
       color: #333;
       border: 1px solid #ddd;
     }
     
-    #guestPlay:hover {
+    #guestPlay:hover:not(:disabled) {
       background-color: #ececec;
     }
     
@@ -79,7 +84,7 @@
       border: 1px solid #ddd;
     }
     
-    #googleLogin:hover {
+    #googleLogin:hover:not(:disabled) {
       background-color: #f8f8f8;
     }
     
@@ -88,7 +93,7 @@
       color: white;
     }
     
-    #twitterLogin:hover {
+    #twitterLogin:hover:not(:disabled) {
       background-color: #1a8cd8;
     }
     
@@ -120,6 +125,32 @@
       font-size: 0.85em;
       position: relative;
       z-index: 1;
+    }
+    
+    .status {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      display: none;
+    }
+    
+    .status.info {
+      background: #e3f2fd;
+      color: #1976d2;
+      display: block;
+    }
+    
+    .status.error {
+      background: #ffebee;
+      color: #c62828;
+      display: block;
+    }
+    
+    .status.success {
+      background: #e8f5e9;
+      color: #2e7d32;
+      display: block;
     }
     
     footer {
@@ -158,13 +189,15 @@
     <button id="guestPlay" class="login-button">
       ゲストでプレイ
     </button>
+    
+    <div id="status" class="status"></div>
   </div>
   
   <footer>© 2025 Matcha. All rights reserved.</footer>
   
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-    import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, TwitterAuthProvider } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, TwitterAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
     
     const firebaseConfig = {
       apiKey: "AIzaSyBhnEso3ozk4xG0k9x-69DC0HrKs8flzeU",
@@ -181,18 +214,65 @@
     const googleProvider = new GoogleAuthProvider();
     const twitterProvider = new TwitterAuthProvider();
     
+    const statusEl = document.getElementById("status");
+    const buttons = document.querySelectorAll(".login-button");
+    
+    function showStatus(message, type = "info") {
+      statusEl.textContent = message;
+      statusEl.className = `status ${type}`;
+      console.log(`[${type.toUpperCase()}] ${message}`);
+    }
+    
+    function disableButtons(disabled) {
+      buttons.forEach(btn => btn.disabled = disabled);
+    }
+    
+    function saveUserAndRedirect(user) {
+      console.log("ユーザー情報を保存:", user);
+      localStorage.setItem("userName", user.displayName || "ユーザー");
+      localStorage.setItem("userId", user.uid);
+      localStorage.setItem("isGuest", "false");
+      showStatus("ログイン成功!リダイレクト中...", "success");
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 1000);
+    }
+    
+    // 【重要】onAuthStateChangedで常にユーザー状態を監視
+    onAuthStateChanged(auth, (user) => {
+      console.log("onAuthStateChanged呼び出し:", user);
+      if (user) {
+        // ユーザーがログイン済み
+        console.log("ログイン済みユーザー検出:", {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName
+        });
+        saveUserAndRedirect(user);
+      } else {
+        console.log("ユーザーはログインしていません");
+        disableButtons(false);
+      }
+    });
+    
     // リダイレクト後の結果取得
+    showStatus("認証状態を確認中...", "info");
     getRedirectResult(auth)
       .then(result => {
         if (result && result.user) {
-          const user = result.user;
-          localStorage.setItem("userName", user.displayName);
-          localStorage.setItem("userId", user.uid);
-          localStorage.setItem("isGuest", "false");
-          window.location.href = "index.html";
+          console.log("リダイレクト結果:", result.user);
+          showStatus("認証成功!", "success");
+          // onAuthStateChangedが自動的に呼ばれるので、ここでは何もしない
+        } else {
+          console.log("リダイレクト結果なし");
+          statusEl.style.display = "none";
         }
       })
-      .catch(err => console.error("Redirect error:", err));
+      .catch(err => {
+        console.error("Redirect error:", err);
+        showStatus(`エラー: ${err.message}`, "error");
+        disableButtons(false);
+      });
     
     // ボタンイベント
     document.getElementById("guestPlay").addEventListener("click", () => {
@@ -203,13 +283,18 @@
     });
     
     document.getElementById("googleLogin").addEventListener("click", () => {
+      console.log("Googleログイン開始");
+      showStatus("Googleにリダイレクト中...", "info");
+      disableButtons(true);
       signInWithRedirect(auth, googleProvider);
     });
     
     document.getElementById("twitterLogin").addEventListener("click", () => {
+      console.log("X(Twitter)ログイン開始");
+      showStatus("Xにリダイレクト中...", "info");
+      disableButtons(true);
       signInWithRedirect(auth, twitterProvider);
     });
   </script>
-    <script src=storageMonitor.js></script>
 </body>
 </html>
