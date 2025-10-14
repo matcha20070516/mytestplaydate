@@ -153,6 +153,41 @@
       display: block;
     }
     
+    .debug-log {
+      margin-top: 16px;
+      padding: 12px;
+      background: #f5f5f5;
+      border-radius: 8px;
+      font-size: 11px;
+      text-align: left;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: monospace;
+      color: #333;
+    }
+    
+    .debug-log div {
+      margin: 4px 0;
+      padding: 4px;
+      border-left: 3px solid #999;
+      padding-left: 8px;
+    }
+    
+    .debug-log .success {
+      border-left-color: #4caf50;
+      color: #2e7d32;
+    }
+    
+    .debug-log .error {
+      border-left-color: #f44336;
+      color: #c62828;
+    }
+    
+    .debug-log .info {
+      border-left-color: #2196f3;
+      color: #1565c0;
+    }
+    
     footer {
       margin-top: 24px;
       font-size: 12px;
@@ -191,6 +226,8 @@
     </button>
     
     <div id="status" class="status"></div>
+    
+    <div id="debugLog" class="debug-log"></div>
   </div>
   
   <footer>© 2025 Matcha. All rights reserved.</footer>
@@ -215,12 +252,23 @@
     const twitterProvider = new TwitterAuthProvider();
     
     const statusEl = document.getElementById("status");
+    const debugLog = document.getElementById("debugLog");
     const buttons = document.querySelectorAll(".login-button");
+    
+    function addLog(message, type = "info") {
+      const logEntry = document.createElement("div");
+      logEntry.className = type;
+      const timestamp = new Date().toLocaleTimeString('ja-JP');
+      logEntry.textContent = `[${timestamp}] ${message}`;
+      debugLog.appendChild(logEntry);
+      debugLog.scrollTop = debugLog.scrollHeight;
+      console.log(`[${type.toUpperCase()}] ${message}`);
+    }
     
     function showStatus(message, type = "info") {
       statusEl.textContent = message;
       statusEl.className = `status ${type}`;
-      console.log(`[${type.toUpperCase()}] ${message}`);
+      addLog(message, type);
     }
     
     function disableButtons(disabled) {
@@ -228,48 +276,65 @@
     }
     
     function saveUserAndRedirect(user) {
-      console.log("ユーザー情報を保存:", user);
+      addLog(`ユーザー情報を保存: ${user.displayName || 'なし'} (UID: ${user.uid.substring(0, 8)}...)`, "success");
       localStorage.setItem("userName", user.displayName || "ユーザー");
       localStorage.setItem("userId", user.uid);
       localStorage.setItem("isGuest", "false");
       showStatus("ログイン成功!リダイレクト中...", "success");
       setTimeout(() => {
         window.location.href = "index.html";
-      }, 1000);
+      }, 2000);
     }
     
     // 【重要】onAuthStateChangedで常にユーザー状態を監視
+    addLog("Firebase初期化完了", "info");
+    
     onAuthStateChanged(auth, (user) => {
-      console.log("onAuthStateChanged呼び出し:", user);
+      addLog("--- onAuthStateChanged呼び出し ---", "info");
+      
       if (user) {
         // ユーザーがログイン済み
-        console.log("ログイン済みユーザー検出:", {
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName
-        });
+        addLog(`✅ ログイン済みユーザー検出`, "success");
+        addLog(`名前: ${user.displayName || 'なし'}`, "info");
+        addLog(`Email: ${user.email || 'なし'}`, "info");
+        addLog(`UID: ${user.uid.substring(0, 12)}...`, "info");
+        addLog(`Provider: ${user.providerData[0]?.providerId || 'なし'}`, "info");
+        showStatus(`ようこそ ${user.displayName || 'ユーザー'}さん!`, "success");
         saveUserAndRedirect(user);
       } else {
-        console.log("ユーザーはログインしていません");
+        addLog("❌ ログインしていません", "info");
+        const localUser = localStorage.getItem("userName");
+        const localUid = localStorage.getItem("userId");
+        if (localUser || localUid) {
+          addLog(`LocalStorageに古いデータあり: ${localUser} (${localUid?.substring(0, 8)}...)`, "info");
+        } else {
+          addLog("LocalStorageにデータなし", "info");
+        }
+        statusEl.style.display = "none";
         disableButtons(false);
       }
     });
     
     // リダイレクト後の結果取得
     showStatus("認証状態を確認中...", "info");
+    addLog("--- getRedirectResult呼び出し ---", "info");
     getRedirectResult(auth)
       .then(result => {
+        addLog("getRedirectResult完了", "info");
+        
         if (result && result.user) {
-          console.log("リダイレクト結果:", result.user);
+          addLog(`✅ リダイレクト結果でユーザー検出: ${result.user.displayName}`, "success");
+          addLog(`Provider: ${result.credential?.providerId || 'なし'}`, "info");
           showStatus("認証成功!", "success");
           // onAuthStateChangedが自動的に呼ばれるので、ここでは何もしない
         } else {
-          console.log("リダイレクト結果なし");
+          addLog("ℹ️ リダイレクト結果なし（通常のページ読み込み）", "info");
           statusEl.style.display = "none";
         }
       })
       .catch(err => {
-        console.error("Redirect error:", err);
+        addLog(`❌ エラー発生: ${err.code}`, "error");
+        addLog(`エラー詳細: ${err.message}`, "error");
         showStatus(`エラー: ${err.message}`, "error");
         disableButtons(false);
       });
@@ -283,14 +348,14 @@
     });
     
     document.getElementById("googleLogin").addEventListener("click", () => {
-      console.log("Googleログイン開始");
+      addLog("🔵 Googleログインボタンクリック", "info");
       showStatus("Googleにリダイレクト中...", "info");
       disableButtons(true);
       signInWithRedirect(auth, googleProvider);
     });
     
     document.getElementById("twitterLogin").addEventListener("click", () => {
-      console.log("X(Twitter)ログイン開始");
+      addLog("🐦 X(Twitter)ログインボタンクリック", "info");
       showStatus("Xにリダイレクト中...", "info");
       disableButtons(true);
       signInWithRedirect(auth, twitterProvider);
