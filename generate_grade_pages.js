@@ -1,27 +1,29 @@
 // Node.js で実行: node generate_grade_pages.js
-const fs = require('fs');
+const fs = require(‘fs’);
 
 const grades = [
-  { num: 1, name: '1級', img: 'result1.PNG' },
-  { num: 2, name: '準1級', img: 'result2.PNG' },
-  { num: 3, name: '2級', img: 'result3.PNG' },
-  { num: 4, name: '準2級', img: 'result4.PNG' },
-  { num: 5, name: '3級', img: 'result5.PNG' },
-  { num: 6, name: '4級', img: 'result6.PNG' },
-  { num: 7, name: '5級', img: 'result7.PNG' },
-  { num: 8, name: '6級', img: 'result8.PNG' },
-  { num: 9, name: '7級', img: 'result9.PNG' },
-  { num: 10, name: '8級', img: 'result10.PNG' }
+{ num: 1, name: ‘1級’, img: ‘result1.PNG’ },
+{ num: 2, name: ‘準1級’, img: ‘result2.PNG’ },
+{ num: 3, name: ‘2級’, img: ‘result3.PNG’ },
+{ num: 4, name: ‘準2級’, img: ‘result4.PNG’ },
+{ num: 5, name: ‘3級’, img: ‘result5.PNG’ },
+{ num: 6, name: ‘4級’, img: ‘result6.PNG’ },
+{ num: 7, name: ‘5級’, img: ‘result7.PNG’ },
+{ num: 8, name: ‘6級’, img: ‘result8.PNG’ },
+{ num: 9, name: ‘7級’, img: ‘result9.PNG’ },
+{ num: 10, name: ‘8級’, img: ‘result10.PNG’ }
 ];
 
 const template = `<!DOCTYPE html>
+
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>TExAM - {{GRADE_NAME}}合格</title>
-  
+
   <!-- OGP設定 -->
+
   <meta property="og:title" content="謎検模試 - {{GRADE_NAME}}合格！" />
   <meta property="og:description" content="TExAMで{{GRADE_NAME}}に合格しました！" />
   <meta property="og:image" content="https://matcha20070516.github.io/mytestplaydate/{{IMAGE}}" />
@@ -31,7 +33,7 @@ const template = `<!DOCTYPE html>
   <meta name="twitter:title" content="謎検模試 - {{GRADE_NAME}}合格！" />
   <meta name="twitter:description" content="TExAMで{{GRADE_NAME}}に合格しました！" />
   <meta name="twitter:image" content="https://matcha20070516.github.io/mytestplaydate/{{IMAGE}}" />
-  
+
   <style>
     body {
       margin: 0;
@@ -108,6 +110,7 @@ const template = `<!DOCTYPE html>
       margin-top: 20px;
     }
   </style>
+
 </head>
 <body>
   <div class="container">
@@ -120,26 +123,47 @@ const template = `<!DOCTYPE html>
       <p>経過時間：<span id="elapsedTimeDisplay">--:--</span></p>
     </div>
 
-    <div class="button-group">
-      <a href="#" id="share-link" class="btn btn-tweet" target="_blank">
-        結果をポストする
-      </a>
+```
+<div class="button-group">
+  <a href="#" id="share-link" class="btn btn-tweet" target="_blank">
+    結果をポストする
+  </a>
 
-      <a id="detail-link" class="btn btn-detail" href="#">
-        解答詳細を見る
-      </a>
-    </div>
+  <a id="detail-link" class="btn btn-detail" href="#">
+    解答詳細を見る
+  </a>
+</div>
 
-    <div id="result-summary"></div>
+<div id="result-summary"></div>
 
-    <div class="button-group">
-      <button id="review-btn" class="btn">問題を見返す</button>
-      <button id="home-btn" class="btn">ホームに戻る</button>
-    </div>
+<div class="button-group">
+  <button id="review-btn" class="btn">問題を見返す</button>
+  <button id="home-btn" class="btn">ホームに戻る</button>
+</div>
+```
+
   </div>
-  
-  <script>
-    window.addEventListener("DOMContentLoaded", () => {
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, doc, setDoc, getDoc, increment } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBhnEso3ozk4xG0k9x-69DC0HrKs8flzeU",
+      authDomain: "mytestplaydate-4bc69.firebaseapp.com",
+      projectId: "mytestplaydate-4bc69",
+      storageBucket: "mytestplaydate-4bc69.firebasestorage.app",
+      messagingSenderId: "995628219885",
+      appId: "1:995628219885:web:333b93e79445febd3fbbe4",
+      measurementId: "G-H1XRB359QB"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    window.addEventListener("DOMContentLoaded", async () => {
       // URLパラメータから情報取得
       const params = new URLSearchParams(window.location.search);
       const grade = params.get('grade') || '{{GRADE_NAME}}';
@@ -178,6 +202,68 @@ const template = `<!DOCTYPE html>
         localStorage.setItem(\`\${currentExamSet}_date\`, date);
         localStorage.setItem(\`\${currentExamSet}_completed\`, "true");
         console.log(\`受験履歴を保存しました: \${currentExamSet}, \${score}点, \${date}\`);
+      }
+
+      // ========================================
+      // 【追加】Firestoreに結果を送信
+      // ========================================
+      const currentUser = auth.currentUser;
+      if (currentUser && currentExamSet && !localStorage.getItem(\`\${currentExamSet}_uploaded\`)) {
+        try {
+          const timestamp = new Date();
+          
+          // 個人の結果を保存
+          const resultData = {
+            userId: currentUser.uid,
+            userName: username,
+            setName: currentExamSet,
+            score: parseInt(score),
+            grade: grade,
+            timestamp: timestamp,
+            createdAt: timestamp.toISOString()
+          };
+          
+          await addDoc(collection(db, "examResults"), resultData);
+          console.log("✅ Firestoreに結果を送信しました");
+          
+          // 統計データを更新
+          const statsRef = doc(db, "examStats", currentExamSet);
+          const statsSnap = await getDoc(statsRef);
+          
+          if (statsSnap.exists()) {
+            // 既存の統計を更新
+            const currentStats = statsSnap.data();
+            const gradeKey = \`grade_\${grade.replace(/級/g, '')}\`;
+            
+            await setDoc(statsRef, {
+              totalCount: increment(1),
+              totalScore: increment(parseInt(score)),
+              [\`gradeCount.\${gradeKey}\`]: increment(1),
+              lastUpdated: timestamp
+            }, { merge: true });
+          } else {
+            // 新規統計を作成
+            const gradeKey = \`grade_\${grade.replace(/級/g, '')}\`;
+            await setDoc(statsRef, {
+              setName: currentExamSet,
+              totalCount: 1,
+              totalScore: parseInt(score),
+              gradeCount: {
+                [gradeKey]: 1
+              },
+              isPublished: false,
+              createdAt: timestamp,
+              lastUpdated: timestamp
+            });
+          }
+          
+          // アップロード済みフラグを立てる（重複送信防止）
+          localStorage.setItem(\`\${currentExamSet}_uploaded\`, "true");
+          console.log("✅ 統計データを更新しました");
+          
+        } catch (error) {
+          console.error("❌ Firestore送信エラー:", error);
+        }
       }
       // ========================================
 
@@ -235,19 +321,20 @@ const template = `<!DOCTYPE html>
       }
     });
   </script>
+
 </body>
 </html>`;
 
 // 10ファイル生成
 grades.forEach(grade => {
-  const html = template
-    .replace(/{{GRADE_NAME}}/g, grade.name)
-    .replace(/{{IMAGE}}/g, grade.img);
-  
-  const filename = `exresult_grade${grade.num}.html`;
-  fs.writeFileSync(filename, html);
-  console.log(`✅ ${filename} を生成しました`);
+const html = template
+.replace(/{{GRADE_NAME}}/g, grade.name)
+.replace(/{{IMAGE}}/g, grade.img);
+
+const filename = `exresult_grade${grade.num}.html`;
+fs.writeFileSync(filename, html);
+console.log(`✅ ${filename} を生成しました`);
 });
 
-console.log('\n🎉 全10ファイルの生成が完了しました！');
-console.log('📝 履歴保存機能が全ファイルに追加されています');
+console.log(’\n🎉 全10ファイルの生成が完了しました！’);
+console.log(‘📝 履歴保存機能が全ファイルに追加されています’);
