@@ -169,6 +169,18 @@ const template = `<!DOCTYPE html>
       }
       document.getElementById("elapsedTimeDisplay").textContent = formatTime(elapsedSec);
 
+      // ========================================
+      // 【追加】マイページ用の受験履歴を保存
+      // ========================================
+      if (currentExamSet) {
+        const date = new Date().toLocaleDateString('ja-JP');
+        localStorage.setItem(\`\${currentExamSet}_score\`, score);
+        localStorage.setItem(\`\${currentExamSet}_date\`, date);
+        localStorage.setItem(\`\${currentExamSet}_completed\`, "true");
+        console.log(\`受験履歴を保存しました: \${currentExamSet}, \${score}点, \${date}\`);
+      }
+      // ========================================
+
       const reviewBtn = document.getElementById("review-btn");
       if (reviewBtn) {
         reviewBtn.addEventListener("click", () => {
@@ -238,3 +250,4 @@ grades.forEach(grade => {
 });
 
 console.log('\n🎉 全10ファイルの生成が完了しました！');
+console.log('📝 履歴保存機能が全ファイルに追加されています');
