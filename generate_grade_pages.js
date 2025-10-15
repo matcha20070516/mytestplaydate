@@ -1,38 +1,37 @@
 // Node.js で実行: node generate_grade_pages.js
-const fs = require(‘fs’);
+const fs = require('fs');
 
 const grades = [
-{ num: 1, name: ‘1級’, img: ‘result1.PNG’ },
-{ num: 2, name: ‘準1級’, img: ‘result2.PNG’ },
-{ num: 3, name: ‘2級’, img: ‘result3.PNG’ },
-{ num: 4, name: ‘準2級’, img: ‘result4.PNG’ },
-{ num: 5, name: ‘3級’, img: ‘result5.PNG’ },
-{ num: 6, name: ‘4級’, img: ‘result6.PNG’ },
-{ num: 7, name: ‘5級’, img: ‘result7.PNG’ },
-{ num: 8, name: ‘6級’, img: ‘result8.PNG’ },
-{ num: 9, name: ‘7級’, img: ‘result9.PNG’ },
-{ num: 10, name: ‘8級’, img: ‘result10.PNG’ }
+  { num: 1, name: '1級', img: 'result1.PNG' },
+  { num: 2, name: '準1級', img: 'result2.PNG' },
+  { num: 3, name: '2級', img: 'result3.PNG' },
+  { num: 4, name: '準2級', img: 'result4.PNG' },
+  { num: 5, name: '3級', img: 'result5.PNG' },
+  { num: 6, name: '4級', img: 'result6.PNG' },
+  { num: 7, name: '5級', img: 'result7.PNG' },
+  { num: 8, name: '6級', img: 'result8.PNG' },
+  { num: 9, name: '7級', img: 'result9.PNG' },
+  { num: 10, name: '8級', img: 'result10.PNG' }
 ];
 
-const template = `<!DOCTYPE html>
-
+function generateHTML(grade) {
+  return `<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TExAM - {{GRADE_NAME}}合格</title>
+  <title>TExAM - ${grade.name}合格</title>
 
   <!-- OGP設定 -->
-
-  <meta property="og:title" content="謎検模試 - {{GRADE_NAME}}合格！" />
-  <meta property="og:description" content="TExAMで{{GRADE_NAME}}に合格しました！" />
-  <meta property="og:image" content="https://matcha20070516.github.io/mytestplaydate/{{IMAGE}}" />
+  <meta property="og:title" content="謎検模試 - ${grade.name}合格！" />
+  <meta property="og:description" content="TExAMで${grade.name}に合格しました！" />
+  <meta property="og:image" content="https://matcha20070516.github.io/mytestplaydate/${grade.img}" />
   <meta property="og:url" content="https://matcha20070516.github.io/mytestplaydate/" />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="謎検模試 - {{GRADE_NAME}}合格！" />
-  <meta name="twitter:description" content="TExAMで{{GRADE_NAME}}に合格しました！" />
-  <meta name="twitter:image" content="https://matcha20070516.github.io/mytestplaydate/{{IMAGE}}" />
+  <meta name="twitter:title" content="謎検模試 - ${grade.name}合格！" />
+  <meta name="twitter:description" content="TExAMで${grade.name}に合格しました！" />
+  <meta name="twitter:image" content="https://matcha20070516.github.io/mytestplaydate/${grade.img}" />
 
   <style>
     body {
@@ -119,29 +118,25 @@ const template = `<!DOCTYPE html>
       <p>名前：<span id="username">---</span></p>
       <p>模試名：<span id="setname">---</span></p>
       <p>得点：<span id="score">0</span> 点</p>
-      <p>認定級：<span id="grade" style="font-weight: bold;">{{GRADE_NAME}}</span></p>
+      <p>認定級：<span id="grade" style="font-weight: bold;">${grade.name}</span></p>
       <p>経過時間：<span id="elapsedTimeDisplay">--:--</span></p>
     </div>
 
-```
-<div class="button-group">
-  <a href="#" id="share-link" class="btn btn-tweet" target="_blank">
-    結果をポストする
-  </a>
+    <div class="button-group">
+      <a href="#" id="share-link" class="btn btn-tweet" target="_blank">
+        結果をポストする
+      </a>
+      <a id="detail-link" class="btn btn-detail" href="#">
+        解答詳細を見る
+      </a>
+    </div>
 
-  <a id="detail-link" class="btn btn-detail" href="#">
-    解答詳細を見る
-  </a>
-</div>
+    <div id="result-summary"></div>
 
-<div id="result-summary"></div>
-
-<div class="button-group">
-  <button id="review-btn" class="btn">問題を見返す</button>
-  <button id="home-btn" class="btn">ホームに戻る</button>
-</div>
-```
-
+    <div class="button-group">
+      <button id="review-btn" class="btn">問題を見返す</button>
+      <button id="home-btn" class="btn">ホームに戻る</button>
+    </div>
   </div>
 
   <script type="module">
@@ -164,17 +159,15 @@ const template = `<!DOCTYPE html>
     const db = getFirestore(app);
 
     window.addEventListener("DOMContentLoaded", async () => {
-      // URLパラメータから情報取得
       const params = new URLSearchParams(window.location.search);
-      const grade = params.get('grade') || '{{GRADE_NAME}}';
+      const grade = params.get('grade') || '${grade.name}';
       const score = params.get('score') || '0';
       
-      // currentExamSetから正しいprefixを取得
       const currentExamSet = localStorage.getItem("currentExamSet") || "";
-      const prefix = \`ex_\${currentExamSet}_\`;
+      const prefix = "ex_" + currentExamSet + "_";
       
-      const username = localStorage.getItem(\`\${prefix}Username\`) || "名無し";
-      const displaySetName = localStorage.getItem(\`\${prefix}SetName\`) || currentExamSet;
+      const username = localStorage.getItem(prefix + "Username") || "名無し";
+      const displaySetName = localStorage.getItem(prefix + "SetName") || currentExamSet;
 
       document.getElementById("username").textContent = username;
       document.getElementById("score").textContent = score;
@@ -182,37 +175,31 @@ const template = `<!DOCTYPE html>
       document.getElementById("grade").textContent = grade;
 
       const elapsedSec =
-        Number(localStorage.getItem(\`\${prefix}ElapsedTime\`)) ||
+        Number(localStorage.getItem(prefix + "ElapsedTime")) ||
         Number(localStorage.getItem("exElapsedTime")) ||
         0;
 
       function formatTime(sec) {
         const m = Math.floor(sec / 60);
         const s = sec % 60;
-        return \`\${m}分\${s}秒\`;
+        return m + "分" + s + "秒";
       }
       document.getElementById("elapsedTimeDisplay").textContent = formatTime(elapsedSec);
 
-      // ========================================
-      // 【追加】マイページ用の受験履歴を保存
-      // ========================================
+      // マイページ用履歴保存
       if (currentExamSet) {
         const date = new Date().toLocaleDateString('ja-JP');
-        localStorage.setItem(\`\${currentExamSet}_score\`, score);
-        localStorage.setItem(\`\${currentExamSet}_date\`, date);
-        localStorage.setItem(\`\${currentExamSet}_completed\`, "true");
-        console.log(\`受験履歴を保存しました: \${currentExamSet}, \${score}点, \${date}\`);
+        localStorage.setItem(currentExamSet + "_score", score);
+        localStorage.setItem(currentExamSet + "_date", date);
+        localStorage.setItem(currentExamSet + "_completed", "true");
+        console.log("受験履歴を保存しました: " + currentExamSet + ", " + score + "点, " + date);
       }
 
-      // ========================================
-      // 【追加】Firestoreに結果を送信
-      // ========================================
+      // Firestore送信
       const currentUser = auth.currentUser;
-      if (currentUser && currentExamSet && !localStorage.getItem(\`\${currentExamSet}_uploaded\`)) {
+      if (currentUser && currentExamSet && !localStorage.getItem(currentExamSet + "_uploaded")) {
         try {
           const timestamp = new Date();
-          
-          // 個人の結果を保存
           const resultData = {
             userId: currentUser.uid,
             userName: username,
@@ -225,30 +212,22 @@ const template = `<!DOCTYPE html>
           
           await addDoc(collection(db, "examResults"), resultData);
           console.log("✅ Firestoreに結果を送信しました");
-          
-          // 統計データを更新
+
           const statsRef = doc(db, "examStats", currentExamSet);
           const statsSnap = await getDoc(statsRef);
+          const gradeKey = "grade_" + grade.replace(/級/g, '');
           
           if (statsSnap.exists()) {
-            // 既存の統計を更新
-            const currentStats = statsSnap.data();
-            const gradeKey = \`grade_\${grade.replace(/級/g, '')}\`;
-            
             const updateData = {
               totalCount: increment(1),
               totalScore: increment(parseInt(score)),
               lastUpdated: timestamp
             };
-            updateData['gradeCount.' + gradeKey] = increment(1);
-            
+            updateData["gradeCount." + gradeKey] = increment(1);
             await setDoc(statsRef, updateData, { merge: true });
           } else {
-            // 新規統計を作成
-            const gradeKey = \`grade_\${grade.replace(/級/g, '')}\`;
             const gradeCountObj = {};
             gradeCountObj[gradeKey] = 1;
-            
             await setDoc(statsRef, {
               setName: currentExamSet,
               totalCount: 1,
@@ -259,56 +238,36 @@ const template = `<!DOCTYPE html>
               lastUpdated: timestamp
             });
           }
-          
-          // アップロード済みフラグを立てる（重複送信防止）
-          localStorage.setItem(\`\${currentExamSet}_uploaded\`, "true");
+
+          localStorage.setItem(currentExamSet + "_uploaded", "true");
           console.log("✅ 統計データを更新しました");
-          
         } catch (error) {
           console.error("❌ Firestore送信エラー:", error);
         }
       }
-      // ========================================
 
-      const reviewBtn = document.getElementById("review-btn");
-      if (reviewBtn) {
-        reviewBtn.addEventListener("click", () => {
-          localStorage.setItem("exReviewMode", "true");
-          localStorage.setItem("exCurrent", "1");
+      document.getElementById("review-btn")?.addEventListener("click", () => {
+        localStorage.setItem("exReviewMode", "true");
+        localStorage.setItem("exCurrent", "1");
+        let targetPage = "";
+        switch (displaySetName) {
+          case "謎検模試_M": targetPage = "exproblem_set1.html"; break;
+          case "謎検模試test": targetPage = "exproblem_set2.html"; break;
+          case "謎検模試_set3": targetPage = "exproblem_set3.html"; break;
+          default: targetPage = "exproblem_set1.html"; break;
+        }
+        window.location.href = targetPage;
+      });
 
-          let targetPage = "";
-          switch (displaySetName) {
-            case "謎検模試_M":
-              targetPage = "exproblem_set1.html";
-              break;
-            case "謎検模試test":
-              targetPage = "exproblem_set2.html";
-              break;
-            case "謎検模試_set3":
-              targetPage = "exproblem_set3.html";
-              break;
-            default:
-              targetPage = "exproblem_set1.html";
-              break;
-          }
+      document.getElementById("home-btn")?.addEventListener("click", () => {
+        window.location.href = "index.html";
+      });
 
-          window.location.href = targetPage;
-        });
-      }
-
-      const homeBtn = document.getElementById("home-btn");
-      if (homeBtn) {
-        homeBtn.addEventListener("click", () => {
-          window.location.href = "index.html";
-        });
-      }
-
-      // 共有用URLを使用
       const shareUrl = params.get('shareUrl') || window.location.href;
       const tweetText = encodeURIComponent(
-        \`『\${displaySetName}』の結果は【\${score}点】で【\${grade}】でした！ #謎解き #TExAM #\${displaySetName.replace(/\\s/g, '')}\\n\${shareUrl}\`
+        "『" + displaySetName + "』の結果は【" + score + "点】で【" + grade + "】でした！ #謎解き #TExAM #" + displaySetName.replace(/\\s/g, '') + "\\n" + shareUrl
       );
-      document.getElementById("share-link").href = \`https://twitter.com/intent/tweet?text=\${tweetText}\`;
+      document.getElementById("share-link").href = "https://twitter.com/intent/tweet?text=" + tweetText;
 
       let detailPage = "exresult_detail_M.html";
       if (displaySetName === "謎検模試_M") {
@@ -318,26 +277,20 @@ const template = `<!DOCTYPE html>
       } else if (displaySetName === "謎検模試_set3") {
         detailPage = "exresult_detail_set3.html";
       }
-      const detailLink = document.getElementById("detail-link");
-      if (detailLink) {
-        detailLink.href = detailPage;
-      }
+      document.getElementById("detail-link").href = detailPage;
     });
   </script>
-
 </body>
 </html>`;
+}
 
-// 10ファイル生成
+// === 10ファイル生成 ===
 grades.forEach(grade => {
-const html = template
-.replace(/{{GRADE_NAME}}/g, grade.name)
-.replace(/{{IMAGE}}/g, grade.img);
-
-const filename = `exresult_grade${grade.num}.html`;
-fs.writeFileSync(filename, html);
-console.log(`✅ ${filename} を生成しました`);
+  const html = generateHTML(grade);
+  const filename = `exresult_grade${grade.num}.html`;
+  fs.writeFileSync(filename, html);
+  console.log(`✅ ${filename} を生成しました`);
 });
 
-console.log(’\n🎉 全10ファイルの生成が完了しました！’);
-console.log(‘📝 履歴保存機能が全ファイルに追加されています’);
+console.log(`\n🎉 全10ファイルの生成が完了しました！`);
+console.log(`📝 履歴保存機能とFirestore送信機能が全ファイルに追加されています`);
