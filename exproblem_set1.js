@@ -116,14 +116,7 @@ const updateTimer = () => {
   document.getElementById("timer").textContent =
     `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
 
-  localStorage.setItem("exElapsedTime", elapsedSec);
-};
-
-// ページ読み込み時に保存された残り時間を読み込み
-const savedTime = localStorage.getItem(`exam_timeLeft_${setName}`);
-if (savedTime !== null) {
-  timeLeft = parseInt(savedTime, 10);
-}
+  localStorage.setItem("exElapsedTime")
 
 // --- 自動セーブ ---
 const autoSaveState = () => {
