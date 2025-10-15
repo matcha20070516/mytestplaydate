@@ -119,6 +119,12 @@ const updateTimer = () => {
   localStorage.setItem("exElapsedTime", elapsedSec);
 };
 
+// ページ読み込み時に保存された残り時間を読み込み
+const savedTime = localStorage.getItem(`exam_timeLeft_${setName}`);
+if (savedTime !== null) {
+  timeLeft = parseInt(savedTime, 10);
+}
+
 // --- 自動セーブ ---
 const autoSaveState = () => {
   localStorage.setItem("exAnswers", JSON.stringify(answers));
