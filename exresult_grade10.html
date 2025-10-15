@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>TExAM - 8級合格</title>
-  
+
   <!-- OGP設定 -->
   <meta property="og:title" content="謎検模試 - 8級合格！" />
   <meta property="og:description" content="TExAMで8級に合格しました！" />
@@ -15,7 +15,7 @@
   <meta name="twitter:title" content="謎検模試 - 8級合格！" />
   <meta name="twitter:description" content="TExAMで8級に合格しました！" />
   <meta name="twitter:image" content="https://matcha20070516.github.io/mytestplaydate/result10.PNG" />
-  
+
   <style>
     body {
       margin: 0;
@@ -92,6 +92,7 @@
       margin-top: 20px;
     }
   </style>
+
 </head>
 <body>
   <div class="container">
@@ -108,7 +109,6 @@
       <a href="#" id="share-link" class="btn btn-tweet" target="_blank">
         結果をポストする
       </a>
-
       <a id="detail-link" class="btn btn-detail" href="#">
         解答詳細を見る
       </a>
@@ -121,20 +121,36 @@
       <button id="home-btn" class="btn">ホームに戻る</button>
     </div>
   </div>
-  
-  <script>
-    window.addEventListener("DOMContentLoaded", () => {
-      // URLパラメータから情報取得
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, doc, setDoc, getDoc, increment } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBhnEso3ozk4xG0k9x-69DC0HrKs8flzeU",
+      authDomain: "mytestplaydate-4bc69.firebaseapp.com",
+      projectId: "mytestplaydate-4bc69",
+      storageBucket: "mytestplaydate-4bc69.firebasestorage.app",
+      messagingSenderId: "995628219885",
+      appId: "1:995628219885:web:333b93e79445febd3fbbe4",
+      measurementId: "G-H1XRB359QB"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    window.addEventListener("DOMContentLoaded", async () => {
       const params = new URLSearchParams(window.location.search);
       const grade = params.get('grade') || '8級';
       const score = params.get('score') || '0';
       
-      // currentExamSetから正しいprefixを取得
       const currentExamSet = localStorage.getItem("currentExamSet") || "";
-      const prefix = `ex_${currentExamSet}_`;
+      const prefix = "ex_" + currentExamSet + "_";
       
-      const username = localStorage.getItem(`${prefix}Username`) || "名無し";
-      const displaySetName = localStorage.getItem(`${prefix}SetName`) || currentExamSet;
+      const username = localStorage.getItem(prefix + "Username") || "名無し";
+      const displaySetName = localStorage.getItem(prefix + "SetName") || currentExamSet;
 
       document.getElementById("username").textContent = username;
       document.getElementById("score").textContent = score;
@@ -142,68 +158,99 @@
       document.getElementById("grade").textContent = grade;
 
       const elapsedSec =
-        Number(localStorage.getItem(`${prefix}ElapsedTime`)) ||
+        Number(localStorage.getItem(prefix + "ElapsedTime")) ||
         Number(localStorage.getItem("exElapsedTime")) ||
         0;
 
       function formatTime(sec) {
         const m = Math.floor(sec / 60);
         const s = sec % 60;
-        return `${m}分${s}秒`;
+        return m + "分" + s + "秒";
       }
       document.getElementById("elapsedTimeDisplay").textContent = formatTime(elapsedSec);
 
-      // ========================================
-      // 【追加】マイページ用の受験履歴を保存
-      // ========================================
+      // マイページ用履歴保存
       if (currentExamSet) {
         const date = new Date().toLocaleDateString('ja-JP');
-        localStorage.setItem(`${currentExamSet}_score`, score);
-        localStorage.setItem(`${currentExamSet}_date`, date);
-        localStorage.setItem(`${currentExamSet}_completed`, "true");
-        console.log(`受験履歴を保存しました: ${currentExamSet}, ${score}点, ${date}`);
+        localStorage.setItem(currentExamSet + "_score", score);
+        localStorage.setItem(currentExamSet + "_date", date);
+        localStorage.setItem(currentExamSet + "_completed", "true");
+        console.log("受験履歴を保存しました: " + currentExamSet + ", " + score + "点, " + date);
       }
-      // ========================================
 
-      const reviewBtn = document.getElementById("review-btn");
-      if (reviewBtn) {
-        reviewBtn.addEventListener("click", () => {
-          localStorage.setItem("exReviewMode", "true");
-          localStorage.setItem("exCurrent", "1");
+      // Firestore送信
+      const currentUser = auth.currentUser;
+      if (currentUser && currentExamSet && !localStorage.getItem(currentExamSet + "_uploaded")) {
+        try {
+          const timestamp = new Date();
+          const resultData = {
+            userId: currentUser.uid,
+            userName: username,
+            setName: currentExamSet,
+            score: parseInt(score),
+            grade: grade,
+            timestamp: timestamp,
+            createdAt: timestamp.toISOString()
+          };
+          
+          await addDoc(collection(db, "examResults"), resultData);
+          console.log("✅ Firestoreに結果を送信しました");
 
-          let targetPage = "";
-          switch (displaySetName) {
-            case "謎検模試_M":
-              targetPage = "exproblem_set1.html";
-              break;
-            case "謎検模試test":
-              targetPage = "exproblem_set2.html";
-              break;
-            case "謎検模試_set3":
-              targetPage = "exproblem_set3.html";
-              break;
-            default:
-              targetPage = "exproblem_set1.html";
-              break;
+          const statsRef = doc(db, "examStats", currentExamSet);
+          const statsSnap = await getDoc(statsRef);
+          const gradeKey = "grade_" + grade.replace(/級/g, '');
+          
+          if (statsSnap.exists()) {
+            const updateData = {
+              totalCount: increment(1),
+              totalScore: increment(parseInt(score)),
+              lastUpdated: timestamp
+            };
+            updateData["gradeCount." + gradeKey] = increment(1);
+            await setDoc(statsRef, updateData, { merge: true });
+          } else {
+            const gradeCountObj = {};
+            gradeCountObj[gradeKey] = 1;
+            await setDoc(statsRef, {
+              setName: currentExamSet,
+              totalCount: 1,
+              totalScore: parseInt(score),
+              gradeCount: gradeCountObj,
+              isPublished: false,
+              createdAt: timestamp,
+              lastUpdated: timestamp
+            });
           }
 
-          window.location.href = targetPage;
-        });
+          localStorage.setItem(currentExamSet + "_uploaded", "true");
+          console.log("✅ 統計データを更新しました");
+        } catch (error) {
+          console.error("❌ Firestore送信エラー:", error);
+        }
       }
 
-      const homeBtn = document.getElementById("home-btn");
-      if (homeBtn) {
-        homeBtn.addEventListener("click", () => {
-          window.location.href = "index.html";
-        });
-      }
+      document.getElementById("review-btn")?.addEventListener("click", () => {
+        localStorage.setItem("exReviewMode", "true");
+        localStorage.setItem("exCurrent", "1");
+        let targetPage = "";
+        switch (displaySetName) {
+          case "謎検模試_M": targetPage = "exproblem_set1.html"; break;
+          case "謎検模試test": targetPage = "exproblem_set2.html"; break;
+          case "謎検模試_set3": targetPage = "exproblem_set3.html"; break;
+          default: targetPage = "exproblem_set1.html"; break;
+        }
+        window.location.href = targetPage;
+      });
 
-      // 共有用URLを使用
+      document.getElementById("home-btn")?.addEventListener("click", () => {
+        window.location.href = "index.html";
+      });
+
       const shareUrl = params.get('shareUrl') || window.location.href;
       const tweetText = encodeURIComponent(
-        `『${displaySetName}』の結果は【${score}点】で【${grade}】でした！ #謎解き #TExAM #${displaySetName.replace(/\s/g, '')}\n${shareUrl}`
+        "『" + displaySetName + "』の結果は【" + score + "点】で【" + grade + "】でした！ #謎解き #TExAM #" + displaySetName.replace(/\s/g, '') + "\n" + shareUrl
       );
-      document.getElementById("share-link").href = `https://twitter.com/intent/tweet?text=${tweetText}`;
+      document.getElementById("share-link").href = "https://twitter.com/intent/tweet?text=" + tweetText;
 
       let detailPage = "exresult_detail_M.html";
       if (displaySetName === "謎検模試_M") {
@@ -213,10 +260,7 @@
       } else if (displaySetName === "謎検模試_set3") {
         detailPage = "exresult_detail_set3.html";
       }
-      const detailLink = document.getElementById("detail-link");
-      if (detailLink) {
-        detailLink.href = detailPage;
-      }
+      document.getElementById("detail-link").href = detailPage;
     });
   </script>
 </body>
