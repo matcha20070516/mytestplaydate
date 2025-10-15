@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>マイページ - TExAM</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      background: #f6f8fb;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* ヘッダー */
+    .header {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      color: #333;
+      font-size: 1.6em;
+    }
+
+    .back-btn {
+      background: #e0e0e0;
+      color: #333;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9em;
+      transition: background 0.2s;
+    }
+
+    .back-btn:hover {
+      background: #d0d0d0;
+    }
+
+    /* プロフィールカード */
+    .profile-card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.8em;
+      font-weight: bold;
+    }
+
+    .profile-info h2 {
+      color: #333;
+      font-size: 1.4em;
+      margin-bottom: 4px;
+    }
+
+    .profile-meta {
+      color: #666;
+      font-size: 0.85em;
+    }
+
+    .profile-details {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .detail-item {
+      display: flex;
+      padding: 12px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+
+    .detail-label {
+      font-weight: 600;
+      color: #555;
+      min-width: 100px;
+    }
+
+    .detail-value {
+      color: #333;
+      flex: 1;
+    }
+
+    .edit-name-section {
+      border-top: 1px solid #e0e0e0;
+      padding-top: 16px;
+      margin-top: 16px;
+    }
+
+    .edit-name-section h3 {
+      font-size: 1.1em;
+      color: #333;
+      margin-bottom: 12px;
+    }
+
+    .name-input-group {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .name-input-group input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1em;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95em;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+
+    .btn-primary {
+      background: #5da3fa;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #3c84e6;
+    }
+
+    .btn-danger {
+      background: #f44336;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #d32f2f;
+    }
+
+    .help-text {
+      font-size: 0.85em;
+      color: #666;
+    }
+
+    /* 受験履歴 */
+    .history-card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .history-card h2 {
+      color: #333;
+      font-size: 1.3em;
+      margin-bottom: 16px;
+    }
+
+    .history-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .history-item {
+      background: #f8f9fa;
+      border-left: 4px solid #5da3fa;
+      padding: 16px;
+      border-radius: 8px;
+      transition: transform 0.2s;
+    }
+
+    .history-item:hover {
+      transform: translateX(4px);
+      background: #f0f4f8;
+    }
+
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .history-set {
+      font-weight: 600;
+      color: #333;
+      font-size: 1.05em;
+    }
+
+    .history-date {
+      font-size: 0.85em;
+      color: #666;
+    }
+
+    .history-stats {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .grade-badge {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 0.9em;
+    }
+
+    .score {
+      font-size: 1.2em;
+      font-weight: 700;
+      color: #5da3fa;
+    }
+
+    .no-history {
+      text-align: center;
+      padding: 40px 20px;
+      color: #999;
+    }
+
+    .no-history-icon {
+      font-size: 3em;
+      margin-bottom: 16px;
+    }
+
+    /* ログアウトボタン */
+    .logout-section {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .status-message {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      display: none;
+    }
+
+    .status-message.success {
+      background: #e8f5e9;
+      color: #2e7d32;
+      display: block;
+    }
+
+    .status-message.error {
+      background: #ffebee;
+      color: #c62828;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- ヘッダー -->
+    <div class="header">
+      <div class="header-top">
+        <h1>マイページ</h1>
+        <button class="back-btn" onclick="location.href='index.html'">← 戻る</button>
+      </div>
+    </div>
+
+    <!-- プロフィールカード -->
+    <div class="profile-card">
+      <div class="profile-header">
+        <div class="avatar" id="avatar"></div>
+        <div class="profile-info">
+          <h2 id="displayName">読み込み中...</h2>
+          <div class="profile-meta" id="accountType"></div>
+        </div>
+      </div>
+
+      <div class="profile-details">
+        <div class="detail-item">
+          <span class="detail-label">ユーザーID</span>
+          <span class="detail-value" id="userId">-</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">メールアドレス</span>
+          <span class="detail-value" id="userEmail">-</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">登録日</span>
+          <span class="detail-value" id="createdAt">-</span>
+        </div>
+      </div>
+
+      <div class="edit-name-section">
+        <h3>表示名を変更</h3>
+        <div id="statusMessage" class="status-message"></div>
+        <div class="name-input-group">
+          <input type="text" id="newName" placeholder="新しい名前を入力">
+          <button class="btn btn-primary" onclick="updateDisplayName()">変更</button>
+        </div>
+        <p class="help-text">※ 変更後は次回ログイン時から反映されます</p>
+      </div>
+    </div>
+
+    <!-- 受験履歴 -->
+    <div class="history-card">
+      <h2>📊 受験履歴</h2>
+      <div id="historyList" class="history-list"></div>
+    </div>
+
+    <!-- ログアウト -->
+    <div class="logout-section">
+      <button class="btn btn-danger" onclick="handleLogout()">ログアウト</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBhnEso3ozk4xG0k9x-69DC0HrKs8flzeU",
+      authDomain: "mytestplaydate-4bc69.firebaseapp.com",
+      projectId: "mytestplaydate-4bc69",
+      storageBucket: "mytestplaydate-4bc69.firebasestorage.app",
+      messagingSenderId: "995628219885",
+      appId: "1:995628219885:web:333b93e79445febd3fbbe4",
+      measurementId: "G-H1XRB359QB"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // グローバル変数
+    window.currentUser = null;
+
+    // ユーザー情報を表示
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        // 未ログイン
+        window.location.href = "login.html";
+        return;
+      }
+
+      window.currentUser = user;
+      
+      // プロフィール表示
+      const displayName = user.displayName || "名前未設定";
+      document.getElementById('displayName').textContent = displayName;
+      document.getElementById('avatar').textContent = displayName.charAt(0).toUpperCase();
+      document.getElementById('userId').textContent = user.uid.substring(0, 16) + "...";
+      document.getElementById('userEmail').textContent = user.email || "未設定";
+      
+      // アカウントタイプ判定
+      const provider = user.providerData[0]?.providerId || "unknown";
+      let accountType = "";
+      if (provider === "google.com") accountType = "🔵 Googleアカウント";
+      else if (provider === "twitter.com") accountType = "🐦 Xアカウント";
+      else accountType = "アカウント";
+      document.getElementById('accountType').textContent = accountType;
+
+      // 登録日
+      const createdDate = user.metadata.creationTime 
+        ? new Date(user.metadata.creationTime).toLocaleDateString('ja-JP')
+        : "不明";
+      document.getElementById('createdAt').textContent = createdDate;
+
+      // 受験履歴を読み込み
+      loadHistory();
+    });
+
+    // 受験履歴を読み込み
+    function loadHistory() {
+      const historyList = document.getElementById('historyList');
+      const history = [];
+
+      // localStorageから受験データを収集
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.endsWith('_completed') && localStorage.getItem(key) === 'true') {
+          const setName = key.replace('_completed', '');
+          const score = localStorage.getItem(`${setName}_score`) || "0";
+          const date = localStorage.getItem(`${setName}_date`) || "日付不明";
+          const grade = getGrade(parseInt(score));
+          
+          history.push({ setName, score, date, grade });
+        }
+      }
+
+      // 履歴がない場合
+      if (history.length === 0) {
+        historyList.innerHTML = `
+          <div class="no-history">
+            <div class="no-history-icon">📝</div>
+            <p>まだ受験履歴がありません</p>
+            <p style="font-size: 0.9em; margin-top: 8px;">模試を受けて結果を記録しましょう!</p>
+          </div>
+        `;
+        return;
+      }
+
+      // 履歴を表示（新しい順）
+      history.reverse();
+      historyList.innerHTML = history.map(item => `
+        <div class="history-item">
+          <div class="history-header">
+            <span class="history-set">${item.setName}</span>
+            <span class="history-date">${item.date}</span>
+          </div>
+          <div class="history-stats">
+            <span class="grade-badge">${item.grade.name}</span>
+            <span class="score">${item.score}点</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 級判定
+    function getGrade(score) {
+      const s = parseInt(score);
+      if (s === 100) return { name: "1級", num: 1 };
+      if (s >= 90) return { name: "準1級", num: 2 };
+      if (s >= 80) return { name: "2級", num: 3 };
+      if (s >= 70) return { name: "準2級", num: 4 };
+      if (s >= 60) return { name: "3級", num: 5 };
+      if (s >= 50) return { name: "4級", num: 6 };
+      if (s >= 40) return { name: "5級", num: 7 };
+      if (s >= 30) return { name: "6級", num: 8 };
+      if (s >= 20) return { name: "7級", num: 9 };
+      return { name: "8級", num: 10 };
+    }
+
+    // 名前変更
+    window.updateDisplayName = async function() {
+      const newName = document.getElementById('newName').value.trim();
+      const statusMsg = document.getElementById('statusMessage');
+
+      if (!newName) {
+        statusMsg.textContent = "名前を入力してください";
+        statusMsg.className = "status-message error";
+        return;
+      }
+
+      if (!window.currentUser) {
+        statusMsg.textContent = "ユーザー情報が取得できません";
+        statusMsg.className = "status-message error";
+        return;
+      }
+
+      try {
+        await updateProfile(window.currentUser, {
+          displayName: newName
+        });
+
+        // localStorageも更新
+        localStorage.setItem("userName", newName);
+
+        statusMsg.textContent = "名前を変更しました!";
+        statusMsg.className = "status-message success";
+        
+        // 画面を更新
+        document.getElementById('displayName').textContent = newName;
+        document.getElementById('avatar').textContent = newName.charAt(0).toUpperCase();
+        document.getElementById('newName').value = "";
+
+        setTimeout(() => {
+          statusMsg.style.display = "none";
+        }, 3000);
+      } catch (error) {
+        statusMsg.textContent = `エラー: ${error.message}`;
+        statusMsg.className = "status-message error";
+      }
+    };
+
+    // ログアウト
+    window.handleLogout = async function() {
+      if (!confirm('ログアウトしますか?')) return;
+
+      try {
+        await signOut(auth);
+        localStorage.clear(); // ゲストデータもクリア
+        window.location.href = "login.html";
+      } catch (error) {
+        alert(`ログアウトエラー: ${error.message}`);
+      }
+    };
+  </script>
+</body>
+</html>
