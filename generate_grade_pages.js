@@ -235,22 +235,25 @@ const template = `<!DOCTYPE html>
             const currentStats = statsSnap.data();
             const gradeKey = \`grade_\${grade.replace(/級/g, '')}\`;
             
-            await setDoc(statsRef, {
+            const updateData = {
               totalCount: increment(1),
               totalScore: increment(parseInt(score)),
-              [\`gradeCount.\${gradeKey}\`]: increment(1),
               lastUpdated: timestamp
-            }, { merge: true });
+            };
+            updateData['gradeCount.' + gradeKey] = increment(1);
+            
+            await setDoc(statsRef, updateData, { merge: true });
           } else {
             // 新規統計を作成
             const gradeKey = \`grade_\${grade.replace(/級/g, '')}\`;
+            const gradeCountObj = {};
+            gradeCountObj[gradeKey] = 1;
+            
             await setDoc(statsRef, {
               setName: currentExamSet,
               totalCount: 1,
               totalScore: parseInt(score),
-              gradeCount: {
-                [gradeKey]: 1
-              },
+              gradeCount: gradeCountObj,
               isPublished: false,
               createdAt: timestamp,
               lastUpdated: timestamp
