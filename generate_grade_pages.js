@@ -21,7 +21,7 @@ function generateHTML(grade) {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>TExAM - ${grade.name}合格</title>
-
+  
   <!-- OGP設定 -->
   <meta property="og:title" content="謎検模試 - ${grade.name}合格！" />
   <meta property="og:description" content="TExAMで${grade.name}に合格しました！" />
@@ -32,7 +32,7 @@ function generateHTML(grade) {
   <meta name="twitter:title" content="謎検模試 - ${grade.name}合格！" />
   <meta name="twitter:description" content="TExAMで${grade.name}に合格しました！" />
   <meta name="twitter:image" content="https://matcha20070516.github.io/mytestplaydate/${grade.img}" />
-
+  
   <style>
     body {
       margin: 0;
@@ -109,7 +109,6 @@ function generateHTML(grade) {
       margin-top: 20px;
     }
   </style>
-
 </head>
 <body>
   <div class="container">
@@ -126,6 +125,7 @@ function generateHTML(grade) {
       <a href="#" id="share-link" class="btn btn-tweet" target="_blank">
         結果をポストする
       </a>
+
       <a id="detail-link" class="btn btn-detail" href="#">
         解答詳細を見る
       </a>
@@ -138,7 +138,7 @@ function generateHTML(grade) {
       <button id="home-btn" class="btn">ホームに戻る</button>
     </div>
   </div>
-
+  
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
     import { getAuth } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
@@ -186,7 +186,7 @@ function generateHTML(grade) {
       }
       document.getElementById("elapsedTimeDisplay").textContent = formatTime(elapsedSec);
 
-      // マイページ用履歴保存
+      // マイページ用の受験履歴を保存
       if (currentExamSet) {
         const date = new Date().toLocaleDateString('ja-JP');
         localStorage.setItem(currentExamSet + "_score", score);
@@ -195,11 +195,12 @@ function generateHTML(grade) {
         console.log("受験履歴を保存しました: " + currentExamSet + ", " + score + "点, " + date);
       }
 
-      // Firestore送信
+      // Firestoreに結果を送信
       const currentUser = auth.currentUser;
       if (currentUser && currentExamSet && !localStorage.getItem(currentExamSet + "_uploaded")) {
         try {
           const timestamp = new Date();
+          
           const resultData = {
             userId: currentUser.uid,
             userName: username,
@@ -212,9 +213,10 @@ function generateHTML(grade) {
           
           await addDoc(collection(db, "examResults"), resultData);
           console.log("✅ Firestoreに結果を送信しました");
-
+          
           const statsRef = doc(db, "examStats", currentExamSet);
           const statsSnap = await getDoc(statsRef);
+          
           const gradeKey = "grade_" + grade.replace(/級/g, '');
           
           if (statsSnap.exists()) {
@@ -224,10 +226,12 @@ function generateHTML(grade) {
               lastUpdated: timestamp
             };
             updateData["gradeCount." + gradeKey] = increment(1);
+            
             await setDoc(statsRef, updateData, { merge: true });
           } else {
             const gradeCountObj = {};
             gradeCountObj[gradeKey] = 1;
+            
             await setDoc(statsRef, {
               setName: currentExamSet,
               totalCount: 1,
@@ -238,30 +242,47 @@ function generateHTML(grade) {
               lastUpdated: timestamp
             });
           }
-
+          
           localStorage.setItem(currentExamSet + "_uploaded", "true");
           console.log("✅ 統計データを更新しました");
+          
         } catch (error) {
           console.error("❌ Firestore送信エラー:", error);
         }
       }
 
-      document.getElementById("review-btn")?.addEventListener("click", () => {
-        localStorage.setItem("exReviewMode", "true");
-        localStorage.setItem("exCurrent", "1");
-        let targetPage = "";
-        switch (displaySetName) {
-          case "謎検模試_M": targetPage = "exproblem_set1.html"; break;
-          case "謎検模試test": targetPage = "exproblem_set2.html"; break;
-          case "謎検模試_set3": targetPage = "exproblem_set3.html"; break;
-          default: targetPage = "exproblem_set1.html"; break;
-        }
-        window.location.href = targetPage;
-      });
+      const reviewBtn = document.getElementById("review-btn");
+      if (reviewBtn) {
+        reviewBtn.addEventListener("click", () => {
+          localStorage.setItem("exReviewMode", "true");
+          localStorage.setItem("exCurrent", "1");
 
-      document.getElementById("home-btn")?.addEventListener("click", () => {
-        window.location.href = "index.html";
-      });
+          let targetPage = "";
+          switch (displaySetName) {
+            case "謎検模試_M":
+              targetPage = "exproblem_set1.html";
+              break;
+            case "謎検模試test":
+              targetPage = "exproblem_set2.html";
+              break;
+            case "謎検模試_set3":
+              targetPage = "exproblem_set3.html";
+              break;
+            default:
+              targetPage = "exproblem_set1.html";
+              break;
+          }
+
+          window.location.href = targetPage;
+        });
+      }
+
+      const homeBtn = document.getElementById("home-btn");
+      if (homeBtn) {
+        homeBtn.addEventListener("click", () => {
+          window.location.href = "index.html";
+        });
+      }
 
       const shareUrl = params.get('shareUrl') || window.location.href;
       const tweetText = encodeURIComponent(
@@ -277,14 +298,17 @@ function generateHTML(grade) {
       } else if (displaySetName === "謎検模試_set3") {
         detailPage = "exresult_detail_set3.html";
       }
-      document.getElementById("detail-link").href = detailPage;
+      const detailLink = document.getElementById("detail-link");
+      if (detailLink) {
+        detailLink.href = detailPage;
+      }
     });
   </script>
 </body>
 </html>`;
 }
 
-// === 10ファイル生成 ===
+// 10ファイル生成
 grades.forEach(grade => {
   const html = generateHTML(grade);
   const filename = `exresult_grade${grade.num}.html`;
@@ -292,5 +316,5 @@ grades.forEach(grade => {
   console.log(`✅ ${filename} を生成しました`);
 });
 
-console.log(`\n🎉 全10ファイルの生成が完了しました！`);
-console.log(`📝 履歴保存機能とFirestore送信機能が全ファイルに追加されています`);
+console.log('\n🎉 全10ファイルの生成が完了しました！');
+console.log('📝 履歴保存機能とFirestore送信機能が全ファイルに追加されています');
