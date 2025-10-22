@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
@@ -16,256 +17,259 @@
       align-items: center;
     }
 
-    .container {
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-      padding: 40px;
-      width: 90%;
-      max-width: 400px;
-      text-align: center;
-      position: relative;
-    }
+```
+.container {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  position: relative;
+}
 
-    /* ヘッダー部分 */
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-    }
+/* ヘッダー部分 */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
 
-    h1 {
-      color: #333;
-      margin: 0;
-      font-size: 1.8em;
-      flex-grow: 1;
-    }
+h1 {
+  color: #333;
+  margin: 0;
+  font-size: 1.8em;
+  flex-grow: 1;
+}
 
-    /* ユーザー情報とボタン */
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.9em;
-      color: #666;
-    }
+/* ユーザー情報とボタン */
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9em;
+  color: #666;
+}
 
-    .login-link-btn {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      font-size: 0.9em;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-    }
+.login-link-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  font-size: 0.9em;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
 
-    .login-link-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-    }
+.login-link-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
 
-    .mypage-btn {
-      background: #5da3fa;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      font-size: 0.9em;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
+.mypage-btn {
+  background: #5da3fa;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  font-size: 0.9em;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
 
-    .mypage-btn:hover {
-      background: #3c84e6;
-      transform: translateY(-2px);
-    }
+.mypage-btn:hover {
+  background: #3c84e6;
+  transform: translateY(-2px);
+}
 
-    input[type="text"] {
-      width: 100%;
-      padding: 12px;
-      font-size: 1em;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      margin-bottom: 16px;
-      box-sizing: border-box;
-    }
+input[type="text"] {
+  width: 100%;
+  padding: 12px;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+}
 
-    select {
-      width: 100%;
-      padding: 10px;
-      font-size: 1em;
-      border-radius: 8px;
-      margin-bottom: 24px;
-      box-sizing: border-box;
-    }
+select {
+  width: 100%;
+  padding: 10px;
+  font-size: 1em;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  box-sizing: border-box;
+}
 
-    button.start-btn {
-      background-color: #5da3fa;
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      font-size: 1em;
-      border-radius: 8px;
-      cursor: pointer;
-      width: 100%;
-    }
+button.start-btn {
+  background-color: #5da3fa;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1em;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+}
 
-    button.start-btn:hover {
-      background-color: #3c84e6;
-    }
+button.start-btn:hover {
+  background-color: #3c84e6;
+}
 
-    .help-btn {
-      position: absolute;
-      top: 16px; 
-      right: 16px; 
-      z-index: 2;
-      width: 32px; 
-      height: 32px;
-      border-radius: 50%; 
-      background: #5da3fa; 
-      color: #fff;
-      border: none; 
-      font-size: 1.2em; 
-      cursor: pointer;
-      display: flex; 
-      align-items: center; 
-      justify-content: center;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    .help-btn:hover { 
-      background: #3c84e6; 
-    }
+.help-btn {
+  position: absolute;
+  top: 16px; 
+  right: 16px; 
+  z-index: 2;
+  width: 32px; 
+  height: 32px;
+  border-radius: 50%; 
+  background: #5da3fa; 
+  color: #fff;
+  border: none; 
+  font-size: 1.2em; 
+  cursor: pointer;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-    .modal {
-      display: none; 
-      position: fixed; 
-      z-index: 10; 
-      left: 0; 
-      top: 0;
-      width: 100vw; 
-      height: 100vh; 
-      background: rgba(0,0,0,0.3);
-      justify-content: center; 
-      align-items: center;
-    }
-    
-    .modal.show { 
-      display: flex; 
-    }
+.help-btn:hover { 
+  background: #3c84e6; 
+}
 
-    .modal-content {
-      background: #fff;
-      border: 3px solid #5da3fa;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-      max-width: 400px;
-      width: 90vw;
-      max-height: 80vh;
-      overflow-y: auto;
-      padding: 24px 14px;
-      text-align: center;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+.modal {
+  display: none; 
+  position: fixed; 
+  z-index: 10; 
+  left: 0; 
+  top: 0;
+  width: 100vw; 
+  height: 100vh; 
+  background: rgba(0,0,0,0.3);
+  justify-content: center; 
+  align-items: center;
+}
 
-    .close-btn {
-      position: absolute;
-      top: 12px;
-      right: 16px;
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      background: none;
-      border: none;
-      font-size: 1.5em;
-      color: #888;
-      cursor: pointer;
-      z-index: 20;
-      padding: 0;
-    }
-    
-    .close-btn:hover { 
-      color: #333; 
-    }
+.modal.show { 
+  display: flex; 
+}
 
-    .slide-nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      padding: 0;
-      box-sizing: border-box;
-      margin-bottom: 12px;
-    }
+.modal-content {
+  background: #fff;
+  border: 3px solid #5da3fa;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  max-width: 400px;
+  width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 24px 14px;
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-    .slide-btn {
-      background: #5da3fa;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      width: 38px;
-      height: 38px;
-      font-size: 1.4em;
-      cursor: pointer;
-      margin: 0 2px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+.close-btn {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  color: #888;
+  cursor: pointer;
+  z-index: 20;
+  padding: 0;
+}
 
-    .slide-btn:disabled {
-      background: #cccccc;
-      cursor: not-allowed;
-    }
+.close-btn:hover { 
+  color: #333; 
+}
 
-    .slide-btn:hover:not(:disabled) {
-      background: #3c84e6;
-    }
+.slide-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0;
+  box-sizing: border-box;
+  margin-bottom: 12px;
+}
 
-    .indicator { 
-      display: flex; 
-      gap: 6px; 
-      margin: 8px 0; 
-    }
-    
-    .dot { 
-      width: 10px; 
-      height: 10px; 
-      border-radius: 50%; 
-      background: #d3d3d3; 
-    }
-    
-    .dot.active { 
-      background: #5da3fa; 
-    }
-    
-    .slide-desc { 
-      margin-bottom: 10px; 
-      min-height: 40px; 
-      text-align: left; 
-    }
+.slide-btn {
+  background: #5da3fa;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  width: 38px;
+  height: 38px;
+  font-size: 1.4em;
+  cursor: pointer;
+  margin: 0 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-    .howto-img {
-      width: 85%;
-      max-width: 600px;
-      aspect-ratio: 1 / 1;
-      border: 2px solid #333;
-      background: #fff;
-      border-radius: 8px;
-      object-fit: contain;
-      display: block;
-      margin: 0 auto;
-      box-sizing: border-box;
-    }
+.slide-btn:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+}
+
+.slide-btn:hover:not(:disabled) {
+  background: #3c84e6;
+}
+
+.indicator { 
+  display: flex; 
+  gap: 6px; 
+  margin: 8px 0; 
+}
+
+.dot { 
+  width: 10px; 
+  height: 10px; 
+  border-radius: 50%; 
+  background: #d3d3d3; 
+}
+
+.dot.active { 
+  background: #5da3fa; 
+}
+
+.slide-desc { 
+  margin-bottom: 10px; 
+  min-height: 40px; 
+  text-align: left; 
+}
+
+.howto-img {
+  width: 85%;
+  max-width: 600px;
+  aspect-ratio: 1 / 1;
+  border: 2px solid #333;
+  background: #fff;
+  border-radius: 8px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+```
+
   </style>
 </head>
 <body>
@@ -274,28 +278,37 @@
       <h1>TExAM</h1>
       <div class="user-info" id="userInfo"></div>
     </div>
-    
-    <input type="text" id="name" placeholder="名前を入力"><br>
-    <select id="set">
-      <option value="謎検模試_M">謎検模試_M</option>
-      <option value="謎検模試test">謎検模試test</option>
-    </select><br>
-    <button class="start-btn" onclick="start()">決定</button>
-    
-    <button class="help-btn" onclick="openHelp()">？</button>
-    
-    <div id="modalHelp" class="modal">
-      <div class="modal-content">
-        <h2 style="margin-top:0;">使い方</h2>
-        <div class="slide-nav">
-          <button id="prevBtn" class="slide-btn">&lt;</button>
-          <div class="indicator" id="indicator"></div>
-          <button id="nextBtn" class="slide-btn">&gt;</button>
-        </div>
-        <img id="howtoImg" src="" alt="使い方画像" class="howto-img">
-        <div class="slide-desc" id="slideDesc"></div>
-      </div>
+
+```
+<input type="text" id="name" placeholder="名前を入力"><br>
+<select id="set">
+  <option value="謎検模試_M">謎検模試_M</option>
+  <option value="謎検模試test">謎検模試test</option>
+</select><br>
+<button class="start-btn" onclick="start()">決定</button>
+
+<div style="text-align: center; margin-top: 16px;">
+  <a href="stats.html" style="color: #5da3fa; text-decoration: none; font-size: 0.95em;">
+    📊 統計データを見る
+  </a>
+</div>
+
+<button class="help-btn" onclick="openHelp()">？</button>
+
+<div id="modalHelp" class="modal">
+  <div class="modal-content">
+    <h2 style="margin-top:0;">使い方</h2>
+    <div class="slide-nav">
+      <button id="prevBtn" class="slide-btn">&lt;</button>
+      <div class="indicator" id="indicator"></div>
+      <button id="nextBtn" class="slide-btn">&gt;</button>
     </div>
+    <img id="howtoImg" src="" alt="使い方画像" class="howto-img">
+    <div class="slide-desc" id="slideDesc"></div>
+  </div>
+</div>
+```
+
   </div>
 
   <script type="module">
@@ -351,6 +364,8 @@
       }
     });
   </script>
+
   <script src="index.js"></script>
+
 </body>
 </html>
