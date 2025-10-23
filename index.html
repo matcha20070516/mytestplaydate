@@ -345,7 +345,10 @@ button:hover {
         `;
         
         // 名前欄に自動入力
-        document.getElementById('name').value = displayName;
+        const nameInput = document.getElementById('name');
+        if (nameInput && !nameInput.value) {
+          nameInput.value = displayName;
+        }
       } else if (isGuest) {
         // ゲストユーザー
         const guestName = localStorage.getItem("userName") || "ゲスト";
@@ -356,7 +359,10 @@ button:hover {
         `;
         
         // 名前欄に自動入力
-        document.getElementById('name').value = guestName;
+        const nameInput = document.getElementById('name');
+        if (nameInput && !nameInput.value) {
+          nameInput.value = guestName;
+        }
       } else {
         // 未ログイン（login.htmlにリダイレクト）
         window.location.href = "login.html";
