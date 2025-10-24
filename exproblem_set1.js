@@ -341,7 +341,7 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowLeft" && current > 1) {
     back();
   }
-  if (e key === "ArrowRight" && current < total) {
+  if (e.key === "ArrowRight" && current < total) {
     forward();
   }
 });
