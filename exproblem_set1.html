@@ -68,7 +68,6 @@
       color: white;
     }
 
-    /* 解答形式が間違っている場合は赤色 */
     .chapter-btn.invalid {
       background-color: #e53935;
       color: white;
@@ -159,7 +158,6 @@
       transition: all 0.3s ease;
     }
 
-    /* モーダルのスタイル改善 */
     #confirm-overlay {
       display: none;
       position: fixed;
@@ -270,7 +268,29 @@
       <button id="confirm-no">キャンセル</button>
     </div>
   </div>
-  <script src="storageMonitor.js"></script>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, increment } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBhnEso3ozk4xG0k9x-69DC0HrKs8flzeU",
+      authDomain: "mytestplaydate-4bc69.firebaseapp.com",
+      projectId: "mytestplaydate-4bc69",
+      storageBucket: "mytestplaydate-4bc69.firebasestorage.app",
+      messagingSenderId: "995628219885",
+      appId: "1:995628219885:web:333b93e79445febd3fbbe4",
+      measurementId: "G-H1XRB359QB"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // グローバルに公開
+    window.db = db;
+    window.firestoreAPI = { doc, setDoc, increment };
+  </script>
   <script src="exproblem_set1.js"></script>
 </body>
 </html>
