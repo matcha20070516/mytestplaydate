@@ -321,4 +321,4 @@ grades.forEach(grade => {
 });
 
 console.log('\n🎉 全10ファイルの生成が完了しました！');
-console.log('📝 履歴保存機能とFirestore送信機能(重複防止付き)が全ファ
+console.log('📝 履歴保存機能とFirestore送信機能(重複防止付き)が全ファイルに搭載しました！')
