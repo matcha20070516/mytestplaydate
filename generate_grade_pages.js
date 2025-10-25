@@ -22,7 +22,6 @@ function generateHTML(grade) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>TExAM - ${grade.name}合格</title>
   
-  <!-- OGP設定 -->
   <meta property="og:title" content="謎検模試 - ${grade.name}合格！" />
   <meta property="og:description" content="TExAMで${grade.name}に合格しました！" />
   <meta property="og:image" content="https://matcha20070516.github.io/mytestplaydate/${grade.img}" />
@@ -192,15 +191,19 @@ function generateHTML(grade) {
         localStorage.setItem(currentExamSet + "_score", score);
         localStorage.setItem(currentExamSet + "_date", date);
         localStorage.setItem(currentExamSet + "_completed", "true");
-        console.log("受験履歴を保存しました: " + currentExamSet + ", " + score + "点, " + date);
+        console.log("受験履歴を保存: " + currentExamSet + ", " + score + "点, " + date);
       }
 
-      // Firestoreに結果を送信
+      // Firestoreに結果を送信（重複防止）
       const currentUser = auth.currentUser;
-      if (currentUser && currentExamSet && !localStorage.getItem(currentExamSet + "_uploaded")) {
+      const uploadKey = currentExamSet + "_uploaded";
+      const isUploaded = localStorage.getItem(uploadKey) === "true";
+      
+      if (currentUser && currentExamSet && !isUploaded) {
         try {
           const timestamp = new Date();
           
+          // 個人の結果を保存
           const resultData = {
             userId: currentUser.uid,
             userName: username,
@@ -212,8 +215,9 @@ function generateHTML(grade) {
           };
           
           await addDoc(collection(db, "examResults"), resultData);
-          console.log("✅ Firestoreに結果を送信しました");
+          console.log("✅ Firestoreに結果を送信");
           
+          // 統計データを更新
           const statsRef = doc(db, "examStats", currentExamSet);
           const statsSnap = await getDoc(statsRef);
           
@@ -243,8 +247,8 @@ function generateHTML(grade) {
             });
           }
           
-          localStorage.setItem(currentExamSet + "_uploaded", "true");
-          console.log("✅ 統計データを更新しました");
+          localStorage.setItem(uploadKey, "true");
+          console.log("✅ 統計データを更新");
           
         } catch (error) {
           console.error("❌ Firestore送信エラー:", error);
@@ -317,4 +321,4 @@ grades.forEach(grade => {
 });
 
 console.log('\n🎉 全10ファイルの生成が完了しました！');
-console.log('📝 履歴保存機能とFirestore送信機能が全ファイルに追加されています');
+console.log('📝 履歴保存機能とFirestore送信機能(重複防止付き)が全ファ
