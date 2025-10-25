@@ -224,9 +224,31 @@ const calculateScore = (userAnswers) => {
 // 【追加】問題ごとの正答率を記録する関数
 // ========================================
 async function saveQuestionStats(userAnswers, setName) {
+  // レビューモードでは送信しない
+  const reviewMode = localStorage.getItem("exReviewMode") === "true";
+  if (reviewMode) {
+    console.log("レビューモード - 統計送信スキップ");
+    return;
+  }
+  
+  // 既に送信済みかチェック
+  const uploadKey = `${setName}_stats_uploaded`;
+  if (localStorage.getItem(uploadKey) === "true") {
+    console.log("統計は送信済み - スキップ");
+    return;
+  }
+  
+  // 送信中フラグ
+  if (window.isUploadingStats) {
+    console.log("統計送信中 - スキップ");
+    return;
+  }
+  window.isUploadingStats = true;
+  
   // window.dbがFirestoreインスタンス
   if (!window.db) {
     console.log("Firestore未接続 - 統計保存スキップ");
+    window.isUploadingStats = false;
     return;
   }
   
@@ -253,9 +275,14 @@ async function saveQuestionStats(userAnswers, setName) {
       }, { merge: true });
     }
     
+    // 送信完了フラグを保存
+    localStorage.setItem(uploadKey, "true");
     console.log("✅ 問題ごとの統計を保存しました");
+    
   } catch (error) {
     console.error("統計保存エラー:", error);
+  } finally {
+    window.isUploadingStats = false;
   }
 }
 // ========================================
