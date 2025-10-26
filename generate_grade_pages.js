@@ -195,65 +195,76 @@ function generateHTML(grade) {
       }
 
       // Firestoreに結果を送信（重複防止）
-      const currentUser = auth.currentUser;
       const uploadKey = currentExamSet + "_uploaded";
       const isUploaded = localStorage.getItem(uploadKey) === "true";
       
-      if (currentUser && currentExamSet && !isUploaded) {
-        try {
-          const timestamp = new Date();
+      // ログイン状態を確認
+      auth.onAuthStateChanged(async (currentUser) => {
+        console.log("認証状態:", currentUser ? "ログイン済み" : "未ログイン");
+        
+        if (currentUser && currentExamSet && !isUploaded) {
+          console.log("Firestore送信開始...");
           
-          // 個人の結果を保存
-          const resultData = {
-            userId: currentUser.uid,
-            userName: username,
-            setName: currentExamSet,
-            score: parseInt(score),
-            grade: grade,
-            timestamp: timestamp,
-            createdAt: timestamp.toISOString()
-          };
-          
-          await addDoc(collection(db, "examResults"), resultData);
-          console.log("✅ Firestoreに結果を送信");
-          
-          // 統計データを更新
-          const statsRef = doc(db, "examStats", currentExamSet);
-          const statsSnap = await getDoc(statsRef);
-          
-          const gradeKey = "grade_" + grade.replace(/級/g, '');
-          
-          if (statsSnap.exists()) {
-            const updateData = {
-              totalCount: increment(1),
-              totalScore: increment(parseInt(score)),
-              lastUpdated: timestamp
-            };
-            updateData["gradeCount." + gradeKey] = increment(1);
+          try {
+            const timestamp = new Date();
             
-            await setDoc(statsRef, updateData, { merge: true });
-          } else {
-            const gradeCountObj = {};
-            gradeCountObj[gradeKey] = 1;
-            
-            await setDoc(statsRef, {
+            // 個人の結果を保存
+            const resultData = {
+              userId: currentUser.uid,
+              userName: username,
               setName: currentExamSet,
-              totalCount: 1,
-              totalScore: parseInt(score),
-              gradeCount: gradeCountObj,
-              isPublished: false,
-              createdAt: timestamp,
-              lastUpdated: timestamp
-            });
+              score: parseInt(score),
+              grade: grade,
+              timestamp: timestamp,
+              createdAt: timestamp.toISOString()
+            };
+            
+            await addDoc(collection(db, "examResults"), resultData);
+            console.log("✅ examResultsに送信完了");
+            
+            // 統計データを更新
+            const statsRef = doc(db, "examStats", currentExamSet);
+            const statsSnap = await getDoc(statsRef);
+            
+            const gradeKey = "grade_" + grade.replace(/級/g, '');
+            
+            if (statsSnap.exists()) {
+              const updateData = {
+                totalCount: increment(1),
+                totalScore: increment(parseInt(score)),
+                lastUpdated: timestamp
+              };
+              updateData["gradeCount." + gradeKey] = increment(1);
+              
+              await setDoc(statsRef, updateData, { merge: true });
+            } else {
+              const gradeCountObj = {};
+              gradeCountObj[gradeKey] = 1;
+              
+              await setDoc(statsRef, {
+                setName: currentExamSet,
+                totalCount: 1,
+                totalScore: parseInt(score),
+                gradeCount: gradeCountObj,
+                isPublished: false,
+                createdAt: timestamp,
+                lastUpdated: timestamp
+              });
+            }
+            
+            localStorage.setItem(uploadKey, "true");
+            console.log("✅ examStatsに送信完了");
+            
+          } catch (error) {
+            console.error("❌ Firestore送信エラー:", error);
+            console.error("エラー詳細:", error.code, error.message);
           }
-          
-          localStorage.setItem(uploadKey, "true");
-          console.log("✅ 統計データを更新");
-          
-        } catch (error) {
-          console.error("❌ Firestore送信エラー:", error);
+        } else {
+          if (!currentUser) console.log("未ログイン - 送信スキップ");
+          if (!currentExamSet) console.log("模試名なし - 送信スキップ");
+          if (isUploaded) console.log("送信済み - 送信スキップ");
         }
-      }
+      });
 
       const reviewBtn = document.getElementById("review-btn");
       if (reviewBtn) {
@@ -321,4 +332,4 @@ grades.forEach(grade => {
 });
 
 console.log('\n🎉 全10ファイルの生成が完了しました！');
-console.log('📝 履歴保存機能とFirestore送信機能(重複防止付き)が全ファイルに搭載しました！')
+console.log('📝 履歴保存機能とFirestore送信機能(重複防止付き)が全ファイルに追加されています');
