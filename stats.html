@@ -381,7 +381,7 @@
       // 公開判定（1週間経過チェック）
       const now = new Date();
       const createdAt = exam.createdAt?.toDate?.() || new Date(exam.createdAt);
-      const daysPassed = Math.floor((now - createdAt) / (1000 * 60 * 60 * 24));
+      const daysPassed = Math.floor((now - createdAt) / (100);
       const isPublished = exam.isPublished || daysPassed >= 7;
 
       // 級別分布データ
