@@ -378,11 +378,11 @@
       // 満点人数を計算
       const perfectCount = exam.gradeCount?.['grade_1'] || 0;
       
-      // 公開判定（1週間経過チェック）
+      // 公開判定（テスト用: すぐ公開）
       const now = new Date();
       const createdAt = exam.createdAt?.toDate?.() || new Date(exam.createdAt);
-      const daysPassed = Math.floor((now - createdAt) / (100);
-      const isPublished = exam.isPublished || daysPassed >= 7;
+      const daysPassed = Math.floor((now - createdAt) / (1000 * 60 * 60 * 24));
+      const isPublished = true; // テスト用に常に公開
 
       // 級別分布データ
       const gradeOrder = ['1', '準1', '2', '準2', '3', '4', '5', '6', '7', '8'];
@@ -452,4 +452,3 @@
     loadAllStats();
   </script>
 </body>
-</html>
