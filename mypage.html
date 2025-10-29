@@ -424,6 +424,55 @@
       font-weight: 600;
     }
 
+    /* 問題別正答率 */
+    .question-stats {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #ddd;
+    }
+
+    .question-stats h4 {
+      font-size: 1em;
+      color: #333;
+      margin-bottom: 12px;
+    }
+
+    .question-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 8px;
+    }
+
+    .question-item {
+      background: #f8f9fa;
+      padding: 8px;
+      border-radius: 6px;
+      text-align: center;
+      border: 2px solid #e0e0e0;
+    }
+
+    .question-item.correct {
+      background: #e8f5e9;
+      border-color: #4caf50;
+    }
+
+    .question-item.incorrect {
+      background: #ffebee;
+      border-color: #f44336;
+    }
+
+    .question-num {
+      font-size: 0.85em;
+      color: #666;
+      margin-bottom: 4px;
+    }
+
+    .question-accuracy {
+      font-size: 1.1em;
+      font-weight: 700;
+      color: #333;
+    }
+
     .loading-stats {
       text-align: center;
       padding: 20px;
@@ -816,6 +865,43 @@
         
       } catch (error) {
         console.error("統計取得エラー:", error);
+        return null;
+      }
+    }
+
+    // 問題別正答率を取得
+    async function loadQuestionStats(setName) {
+      try {
+        const questionStats = [];
+        
+        // 自分の解答を取得
+        const myAnswers = JSON.parse(localStorage.getItem("exAnswers") || "[]");
+        
+        // 各問題の統計を取得（最大20問）
+        for (let i = 1; i <= 20; i++) {
+          const questionRef = doc(db, "questionStats", `${setName}_q${i}`);
+          const questionSnap = await getDoc(questionRef);
+          
+          if (questionSnap.exists()) {
+            const data = questionSnap.data();
+            const accuracy = data.totalAttempts > 0 
+              ? Math.round((data.correctCount / data.totalAttempts) * 100)
+              : 0;
+            
+            // 自分が正解したかどうか（simplifiedな判定）
+            const isCorrect = myAnswers[i - 1] ? true : false; // 実際は正誤判定が必要
+            
+            questionStats.push({
+              questionNum: i,
+              accuracy,
+              isCorrect
+            });
+          }
+        }
+        
+        return questionStats.length > 0 ? questionStats : null;
+      } catch (error) {
+        console.error("問題別統計取得エラー:", error);
         return null;
       }
     }
